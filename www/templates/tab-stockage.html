@@ -1,0 +1,14 @@
+<ion-view view-title="Stockage">
+  <ion-content class="padding" on-swipe-right="goBack()" on-swipe-left="goForward()">
+    <ion-list>
+      <ion-item class="item-button-right" ng-repeat="chat in chats" align="left">
+        <p>{{chat.name}}</p>
+        <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
+      </ion-item>
+    </ion-list>
+
+    <button class="button button-block button-positive" ng-click="changePageToAdd()">
+      Toevoegen
+    </button>
+  </ion-content>
+</ion-view>

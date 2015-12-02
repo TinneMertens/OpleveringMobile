@@ -1,0 +1,21 @@
+<ion-view view-title="Overzicht categoriën" align="center">
+  <ion-content>
+    <!-- <div class="list"> -->
+    <!-- <div align="center">
+      <br>
+      <h3 class="title">Categorie toevoegen</h3>
+    </div> -->
+    <br>
+    <ion-list>
+      <ion-item class="item-button-right" ng-repeat="chat in chats" align="left">
+        <p>{{chat.name}}</p>
+        <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
+      </ion-item>
+    </ion-list>
+
+      <button class="button button-block button-positive" ng-click="changePageToAdd()">
+        Toevoegen
+      </button>
+    <!-- </div> -->
+  </ion-content>
+</ion-view>

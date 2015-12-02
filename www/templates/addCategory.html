@@ -1,0 +1,22 @@
+<ion-view view-title="Categorie toevoegen">
+  <ion-content>
+    <form name="test" ng-submit="addCategory(test, cat)" novalidate>
+      <div class="control-group">
+        <label class="item item-input item-stacked-label" ng-class="{ 'has-error' : test.catName.$invalid}">
+          <span class="input-label">Naam</span>
+          <input type="text" name="catName" ng-model="cat.catName" placeholder="Naam" required>
+        </label>
+        <br>
+
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Aantal flessen (Optioneel)</span>
+          <input type="text" name="number" ng-model="cat.number" placeholder="Flessen">
+        </label>
+
+        <button class="button button-block button-positive" >
+          Toevoegen
+        </button>
+        </div
+    </form>
+  </ion-content>
+</ion-view>
