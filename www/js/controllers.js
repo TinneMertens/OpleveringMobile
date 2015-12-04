@@ -37,23 +37,23 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   $scope.storages = Storages;
 
   $scope.showConfirm = function(index) {
-    var name = Chats.get(index)
+    // var name = Storages.get(index)
     var confirmPopup = $ionicPopup.confirm({
-      title: 'Verwijder ' + name.name,
+      title: 'Verwijder',
       template: 'Bent u zeker dat u dit item wilt verwijderen?'
     });
     confirmPopup.then(function(res) {
       if(res) {
-        console.log('You are sure');
+        Storages.$remove(index);
       } else {
         console.log('You are not sure');
       }
     });
   };
 
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  };
+  // $scope.remove = function(chat) {
+  //   Chats.remove(chat);
+  // };
 
   $scope.changePageToAdd = function(){
     $state.go('tab.addStorageplace');
@@ -98,20 +98,28 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
 })
 
-.controller('AddstorageCtrl', function($scope, Chats){
+.controller('AddstorageCtrl', function($scope, $state, Storages){
 
+  $scope.storages = Storages;
   $scope.addStorage = function(form, storage){
     if(form.$valid){
       var storageName = storage.storageName
       var storageAddress = storage.address
       var storageCity = storage.city
-      console.log(storageName, storageAddress, storageCity)
+
+      var add = $scope.storages.$add({
+        "name": storageName
+      });
+
+      if(add){
+          $state.go('tab.stockage');
+      };
     }
   }
 })
 
 .controller('OverviewCatCtrl', function($scope, $state, $ionicPopup, Categories){
-    $scope.Categories = Categories;
+    $scope.categories = Categories;
 
   $scope.showConfirm = function(index) {
     // var name = Chats.get(index)
@@ -121,9 +129,8 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     });
     confirmPopup.then(function(res) {
       if(res) {
-        $scope.remove = function(){
           Categories.$remove(index);
-        }
+          // $scope.categories.$remove(index);
         // console.log('You are sure');
       } else {
         console.log('You are not sure');
@@ -136,14 +143,17 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   }
 })
 
-.controller('addCatCtrl', function($scope, $state){
+.controller('addCatCtrl', function($scope, $state, Categories){
   // var catName = $scope.text;
-
+  $scope.categories = Categories;
   $scope.addCategory = function(test, cat) {
     if(test.$valid){
       var catName = cat.catName
       var number = cat.number
-      console.log(catName, number);
+      $scope.categories.$add({
+        "Category": catName
+      });
+        $state.go('tab.overviewCat');
     }else{
       test.catName.focus();
     }

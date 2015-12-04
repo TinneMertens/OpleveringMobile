@@ -11,8 +11,6 @@ angular.module('starter.services', ['starter.controllers'])
   return $firebaseArray(invenRef);
 }])
 
-
-
 // angular.module('starter.services', [])
 //
 // .factory('Chats', function() {
