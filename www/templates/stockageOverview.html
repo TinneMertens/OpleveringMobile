@@ -1,8 +1,8 @@
 <ion-view view-title="Opslagplaatsen">
   <ion-content class="padding" on-swipe-right="goBack()" on-swipe-left="goForward()">
     <ion-list>
-      <ion-item class="item-button-right" ng-repeat="chat in chats" align="left">
-        <p>{{chat.name}}</p>
+      <ion-item class="item-button-right" ng-repeat="storage in storages" align="left">
+        <p>{{storage.name}}</p>
         <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
       </ion-item>
     </ion-list>

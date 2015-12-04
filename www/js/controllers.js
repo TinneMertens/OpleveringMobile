@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['starter.services', 'firebase'])
 
 .controller('HomeCtrl', function($scope, $ionicHistory){
   $scope.myGoBack = function(){
@@ -7,22 +7,25 @@ angular.module('starter.controllers', [])
 })
 
 .controller('InventoryCtrl', function($scope, $ionicTabsDelegate) {
-  $scope.goForward = function () {
-         var selected = $ionicTabsDelegate.selectedIndex();
-         if (selected != -1) {
-             $ionicTabsDelegate.select(selected + 1);
-         }
-     }
+  $scope.today = function() {
+      $scope.dt = new Date();
+    };
+    $scope.today();
 
-     $scope.goBack = function () {
-         var selected = $ionicTabsDelegate.selectedIndex();
-         if (selected != -1 && selected != 0) {
-             $ionicTabsDelegate.select(selected - 1);
-         }
-     }
+  $scope.open = function($event) {
+    $scope.status.opened = true;
+  };
+
+  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+  $scope.format = $scope.formats[0];
+
+  $scope.status = {
+    opened: false
+  };
+
 })
 
-.controller('StockageCtrl', function($scope, $ionicPopup, $state, Chats) {
+.controller('StockageCtrl', function($scope, $ionicPopup, $state, Storages) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -31,7 +34,7 @@ angular.module('starter.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
-  $scope.chats = Chats.all();
+  $scope.storages = Storages;
 
   $scope.showConfirm = function(index) {
     var name = Chats.get(index)
@@ -107,18 +110,21 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('OverviewCatCtrl', function($scope, $state, $ionicPopup, Chats){
-  $scope.chats = Chats.all();
+.controller('OverviewCatCtrl', function($scope, $state, $ionicPopup, Categories){
+    $scope.Categories = Categories;
 
   $scope.showConfirm = function(index) {
-    var name = Chats.get(index)
+    // var name = Chats.get(index)
     var confirmPopup = $ionicPopup.confirm({
-      title: 'Verwijder item ' + name.name,
+      title: 'Verwijder item ',
       template: 'Bent u zeker dat u dit item wilt verwijderen?'
     });
     confirmPopup.then(function(res) {
       if(res) {
-        console.log('You are sure');
+        $scope.remove = function(){
+          Categories.$remove(index);
+        }
+        // console.log('You are sure');
       } else {
         console.log('You are not sure');
       }

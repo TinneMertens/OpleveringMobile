@@ -38,3 +38,15 @@ label.item.valid-lr {
 .tab-item.tab-item-active, .tab-item.active, .tab-item.activated {
     color: red;
 }
+
+/*Datepicker*/
+.full button span {
+  background-color: limegreen;
+  border-radius: 32px;
+  color: black;
+}
+.partially button span {
+  background-color: orange;
+  border-radius: 32px;
+  color: black;
+}
