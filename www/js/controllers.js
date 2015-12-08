@@ -6,7 +6,9 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   }
 })
 
-.controller('InventoryCtrl', function($scope, $ionicTabsDelegate) {
+.controller('InventoryCtrl', function($scope, $ionicTabsDelegate, $state, $ionicPopup, Storages, Categories, sharedProperties) {
+  $scope.storages = Storages;
+
   $scope.today = function() {
       $scope.dt = new Date();
     };
@@ -22,6 +24,59 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   $scope.status = {
     opened: false
   };
+
+  // $scope.makeInventory = function(storage){
+  //   $scope.showConfirm = function() {
+  //     var confirmPopup = $ionicPopup.confirm({
+  //       title: 'Bevestiging',
+  //       template: 'Wilt u de inventaris aanmaken?'
+  //     });
+  //     confirmPopup.then(function(res) {
+  //       if(res) {
+  //         var selectedStorage = storage;
+  //         console.log(selectedStorage);
+  //         $state.go('tab.category');
+  //       } else {
+  //         console.log('You are not sure');
+  //       }
+  //     });
+  //   };
+  //
+  // }
+  $scope.makeInventory = function(checked){
+
+    var confirmPopup = $ionicPopup.confirm({
+      title: 'Bevestiging',
+      template: 'Wilt u een nieuwe inventaris aanmaken?'
+    });
+    confirmPopup.then(function(res) {
+      if(res) {
+        var selectedStorage = checked.check;
+        console.log(selectedStorage);
+        $state.go('tab.category');
+      } else {
+        console.log('You are not sure');
+      }
+    });
+
+  }
+})
+
+.controller('CategoryCtrl', function($scope, $state, sharedProperties, Categories){
+  $scope.categories = Categories;
+
+  $scope.goToInventoryDetail = function($cat){
+    // $scope.cat = sharedProperties.getProperty();
+    var cat = $cat;
+    console.log(cat);
+    sharedProperties.setProperty(cat);
+    $state.go('tab.inventoryDetail');
+  }
+
+})
+
+.controller('DetailCtrl', function($scope, sharedProperties){
+  $scope.cat = sharedProperties.getProperty();
 
 })
 

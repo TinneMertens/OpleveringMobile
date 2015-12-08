@@ -1,10 +1,22 @@
 angular.module('starter.services', ['starter.controllers'])
 
+.service('sharedProperties', function () {
+        var property = 'First';
+
+        return {
+            getProperty: function () {
+                return property;
+            },
+            setProperty: function(value) {
+                property = value;
+            }
+        };
+    })
+
 .factory('Storages', ['$firebaseArray', function($firebaseArray) {
   var itemsRef = new Firebase('https://testdb-1.firebaseio.com/Storages');
   return $firebaseArray(itemsRef);
 }])
-
 
 .factory('Categories', ['$firebaseArray', function($firebaseArray) {
   var invenRef = new Firebase('https://testdb-1.firebaseio.com/Categorie');

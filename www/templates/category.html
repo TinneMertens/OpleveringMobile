@@ -1,0 +1,8 @@
+<ion-view view-title="Categoriën">
+  <ion-content class="padding">
+    <p><b>Kies de gewenste categorie</b></p>
+    <button class="button button-full button-outline button-positive" ng-repeat="category in categories" ng-click="goToInventoryDetail(category.Category)">
+      {{ category.Category}}
+    </button>
+  </ion-content>
+</ion-view>

@@ -50,3 +50,7 @@ label.item.valid-lr {
   border-radius: 32px;
   color: black;
 }
+
+.item .row, .item .col {
+  padding: 0;
+}
