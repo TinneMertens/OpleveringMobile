@@ -13,12 +13,18 @@
           <input type="text" name="number" ng-model="cat.number" placeholder="Flessen">
         </label>
 
-        <ion-checkbox ng-model="isChecked">Kan gedeeltelijk gevuld zijn.</ion-checkbox>
+        <ion-checkbox ng-model="cat.isChecked">Kan gedeeltelijk gevuld zijn.</ion-checkbox>
 
         <button class="button button-block button-dark" >
           Toevoegen
         </button>
         </div
+        <ion-list>
+          <!-- <ion-item class="item-button-right" ng-repeat="categorie in categories" align="left">
+            <p>{{categorie.Category}}</p>
+            <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
+          </ion-item> -->
+        </ion-list>
     </form>
   </ion-content>
 </ion-view>

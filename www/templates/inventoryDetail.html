@@ -1,19 +1,23 @@
 <ion-view view-title={{cat}}>
   <ion-content class="padding">
-    <div class="list">
-      <label class="item item-input item-floating-label">
-        <span class="input-label"><p>Aantal volle bakken/boxes</p></span>
-        <input type="text" placeholder="Aantal volle bakken/boxes">
-      </label>
-      <br>
-      <label class="item item-input item-floating-label">
-        <span class="input-label"><p>Aantal (losse) flessen</p></span>
-        <input type="text" placeholder="Aantal (losse) flessen">
-      </label>
-      <br>
-      <button class="button button-block button-dark" align="left">
-        Toevoegen
-      </button>
-    </div>
+    <form name="inventory" ng-submit="editInventory(inventory, invent)" novalidate>
+      <div class="list">
+        <label class="item item-input item-floating-label">
+          <span class="input-label"><p>Aantal volle bakken/boxes</p></span>
+          <input type="number" ng-model="invent.full" placeholder="Aantal volle bakken/boxes">
+        </label>
+        <br>
+        <div ng-if="optional">
+          <label class="item item-input item-floating-label">
+            <span class="input-label"><p>Aantal (losse) flessen</p></span>
+            <input type="number" ng-model="invent.half" placeholder="Aantal (losse) flessen" max={{size}}>
+          </label>
+        </div>
+        <br>
+        <button class="button button-block button-dark" align="left">
+          Toevoegen
+        </button>
+      </div>
+    </form>
   </ion-content>
 </ion-view>

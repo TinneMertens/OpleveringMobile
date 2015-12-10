@@ -65,19 +65,55 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 .controller('CategoryCtrl', function($scope, $state, sharedProperties, Categories){
   $scope.categories = Categories;
 
-  $scope.goToInventoryDetail = function($cat){
+  $scope.goToInventoryDetail = function($index){
     // $scope.cat = sharedProperties.getProperty();
-    var cat = $cat;
-    console.log(cat);
-    sharedProperties.setProperty(cat);
+    // var cat = Categories[$cat].Category;
+    // console.log(cat);
+    sharedProperties.setProperty($index);
     $state.go('tab.inventoryDetail');
   }
 
 })
 
-.controller('DetailCtrl', function($scope, sharedProperties){
-  $scope.cat = sharedProperties.getProperty();
+.controller('DetailCtrl', function($scope, $ionicPopup, $state, sharedProperties, Categories){
+  var index = sharedProperties.getProperty();
 
+  $scope.cat = Categories[index].Category;
+  var optional = Categories[index].Optional;
+  $scope.categories = Categories;
+  $scope.size = Categories[index].Size;
+  if(optional == true){
+    $scope.optional = true;
+  }else{
+    $scope.optional = false;
+  }
+
+  // for(i = 0; i < $scope.categories.length; i++){
+  //   var element = $scope.categories.getElementById(i);
+  //   var name = element.Category;
+  //   if(name == $scope.cat){
+  //     var optional = element.Optional;
+  //   }
+  // }
+  // console.log(optional);
+  $scope.editInventory = function(form, invent){
+    if(form.$valid){
+      var full = invent.full;
+      var half = invent.half;
+      console.log(full);
+      console.log(half);
+    }
+    else{
+      var alertPopup = $ionicPopup.alert({
+         title: 'Waarschuwing',
+         template: 'Het aantal ingevulde losse flesjes is groter dan de maximum hoeveelheid dat in een bak aanwezig kan zijn.'
+       });
+       alertPopup.then(function(res) {
+         console.log('Thank you for not eating my delicious ice cream cone');
+         $state.go('tab.inventoryDetail');
+       });
+    }
+  }
 })
 
 .controller('StockageCtrl', function($scope, $ionicPopup, $state, Storages) {
@@ -204,13 +240,27 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   $scope.addCategory = function(test, cat) {
     if(test.$valid){
       var catName = cat.catName
-      var number = cat.number
+      if(typeof cat.number == "undefined"){
+        var number = null;
+      }
+      else{
+          var number = cat.number
+      }
+      if(typeof cat.isChecked != "undefined"){
+          var optional = true
+      }else{
+        var optional = false;
+      }
+
+      console.log(number);
       $scope.categories.$add({
-        "Category": catName
+        "Category": catName,
+        "Size": number,
+        "Optional": optional
       });
-        $state.go('tab.overviewCat');
+      $state.go('tab.overviewCat');
     }else{
-      test.catName.focus();
+
     }
   };
 })
