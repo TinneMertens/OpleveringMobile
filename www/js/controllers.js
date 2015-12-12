@@ -6,8 +6,9 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   }
 })
 
-.controller('InventoryCtrl', function($scope, $ionicTabsDelegate, $state, $ionicPopup, Storages, Categories, sharedProperties) {
+.controller('InventoryCtrl', function($scope, $ionicTabsDelegate, $state, $ionicPopup, Storages, Categories, Inventory, sharedProperties) {
   $scope.storages = Storages;
+  $scope.inventories = Inventory;
 
   $scope.today = function() {
       $scope.dt = new Date();
@@ -52,7 +53,11 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     confirmPopup.then(function(res) {
       if(res) {
         var selectedStorage = checked.check;
-        console.log(selectedStorage);
+        $scope.inventories.$add({
+        "Date" : Firebase.ServerValue.TIMESTAMP,
+       // "Date" : $scope.date.OpenDate.getTime(),
+        "Inventory": selectedStorage
+      });
         $state.go('tab.category');
       } else {
         console.log('You are not sure');
@@ -75,7 +80,9 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
 })
 
-.controller('DetailCtrl', function($scope, $ionicPopup, $state, sharedProperties, Categories){
+.controller('DetailCtrl', function($scope, $ionicPopup, $state, sharedProperties, Categories, Inventory, Product){
+  $scope.products = Inventory;
+  $scope.products = Product;
   var index = sharedProperties.getProperty();
 
   $scope.cat = Categories[index].Category;
@@ -88,20 +95,27 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     $scope.optional = false;
   }
 
-  // for(i = 0; i < $scope.categories.length; i++){
-  //   var element = $scope.categories.getElementById(i);
-  //   var name = element.Category;
-  //   if(name == $scope.cat){
-  //     var optional = element.Optional;
-  //   }
-  // }
-  // console.log(optional);
   $scope.editInventory = function(form, invent){
     if(form.$valid){
       var full = invent.full;
-      var half = invent.half;
+      if(typeof invent.half != "undefined"){
+        var half = invent.half;
+      }else{
+        var half = null;
+      }
+
       console.log(full);
       console.log(half);
+
+      var now = Firebase.ServerValue.TIMESTAMP;
+      var local = new Date().getDate();
+
+      Product.on('child_added', function(snapshot){
+        snapshot.ref().child("Products").update({
+          'Boxes' : full,
+          'Bottles' : half
+        });
+      });
     }
     else{
       var alertPopup = $ionicPopup.alert({

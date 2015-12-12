@@ -7,8 +7,8 @@
     </div> -->
     <br>
     <ion-list>
-      <ion-item class="item-button-right" ng-repeat="chat in chats" align="left">
-        <p>{{chat.name}}</p>
+      <ion-item class="item-button-right" ng-repeat="inventory in inventories" align="left">
+        <p>{{inventory.Date | date:'dd/MM/yyyy'}}</p>
         <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm()"></a>
       </ion-item>
     </ion-list>

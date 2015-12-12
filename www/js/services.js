@@ -23,6 +23,20 @@ angular.module('starter.services', ['starter.controllers'])
   return $firebaseArray(invenRef);
 }])
 
+/*creeer inventory*/
+.factory('Inventory', ['$firebaseArray', function($firebaseArray) {
+  var invenRef = new Firebase('https://testdb-1.firebaseio.com/Inventories');
+ // var addProductRef = new Firebase('https://testdb-1.firebaseio.com/Inventories/Products');
+      return $firebaseArray(invenRef);
+}])
+
+/*add products*/
+.factory('Product', ['$firebaseArray', function($firebaseArray) {
+    var addProductRef = new Firebase('https://testdb-1.firebaseio.com/Inventories/');
+    return addProductRef;
+    //return addProductRef
+}])
+
 // angular.module('starter.services', [])
 //
 // .factory('Chats', function() {
