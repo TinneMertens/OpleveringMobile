@@ -85,6 +85,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   var optional = Categories[index].Optional;
   $scope.categories = Categories;
   $scope.size = Categories[index].Size;
+
   if(optional == true){
     $scope.optional = true;
   }else{
@@ -111,23 +112,24 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
       var ref = new Firebase("https://testdb-1.firebaseio.com/");
       var inventoryRef = ref.child("Inventories");
       var lineRef = inventoryRef.child(id);
+      console.log(category);
       var check = lineRef.child(category);
-      console.log(check.value);
-      if(typeof check == "undefined"){
-        lineRef.child(category).update({
-          'Boxes': ({
-             full
-          }),
-          'Bottles': ({
-            half
-          })
-        });
-      }else{
-        check.update({
-          'Boxes': full,
-          'Bottles': half
-        })
-      }
+      console.log("categorie " + check);
+      // if(typeof check.value == "undefined"){
+      //   lineRef.child(category).update({
+      //     'Boxes': full,
+      //     'Bottles': half
+      //   });
+      // }else{
+      check.push({
+        full,
+        half
+      })
+        // check.update({
+        //   'Boxes': full,
+        //   'Bottles': half
+        // })
+      // }
 
 
       // Product.on('child_added', function(snapshot){
@@ -299,8 +301,8 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   };
 })
 
-.controller('overviewInvenCtrl', function($scope, $ionicPopup, Chats){
-  $scope.chats = Chats.all();
+.controller('overviewInvenCtrl', function($scope, $ionicPopup, Inventory){
+  $scope.inventories = Inventory;
 
   $scope.showConfirm = function() {
     var confirmPopup = $ionicPopup.confirm({
