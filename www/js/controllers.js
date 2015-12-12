@@ -6,7 +6,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   }
 })
 
-.controller('InventoryCtrl', function($scope, $ionicTabsDelegate, $state, $ionicPopup, Storages, Categories, Inventory, sharedProperties) {
+.controller('InventoryCtrl', function($scope, $ionicTabsDelegate, $state, $ionicPopup, $filter, $localstorage, Storages, Categories, Inventory, sharedProperties) {
   $scope.storages = Storages;
   $scope.inventories = Inventory;
 
@@ -26,26 +26,10 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     opened: false
   };
 
-  // $scope.makeInventory = function(storage){
-  //   $scope.showConfirm = function() {
-  //     var confirmPopup = $ionicPopup.confirm({
-  //       title: 'Bevestiging',
-  //       template: 'Wilt u de inventaris aanmaken?'
-  //     });
-  //     confirmPopup.then(function(res) {
-  //       if(res) {
-  //         var selectedStorage = storage;
-  //         console.log(selectedStorage);
-  //         $state.go('tab.category');
-  //       } else {
-  //         console.log('You are not sure');
-  //       }
-  //     });
-  //   };
-  //
-  // }
-  $scope.makeInventory = function(checked){
+  var date = $scope.dt;
+  var dt = $filter('date')(date, "dd-MM-yyyy");
 
+  $scope.makeInventory = function(checked){
     var confirmPopup = $ionicPopup.confirm({
       title: 'Bevestiging',
       template: 'Wilt u een nieuwe inventaris aanmaken?'
@@ -53,11 +37,21 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     confirmPopup.then(function(res) {
       if(res) {
         var selectedStorage = checked.check;
-        $scope.inventories.$add({
-        "Date" : Firebase.ServerValue.TIMESTAMP,
-       // "Date" : $scope.date.OpenDate.getTime(),
-        "Inventory": selectedStorage
-      });
+        var id = dt+selectedStorage;
+        console.log(id);
+        var ref = new Firebase("https://testdb-1.firebaseio.com/");
+        var inventoryRef = ref.child("Inventories");
+
+        inventoryRef.child(id).set({
+          "Date" : Firebase.ServerValue.TIMESTAMP,
+          "Inventory": selectedStorage
+        });
+        $localstorage.set('dbKey', id);
+      //   $scope.inventories.$add({
+      //   "Date" : Firebase.ServerValue.TIMESTAMP,
+      //  // "Date" : $scope.date.OpenDate.getTime(),
+      //   "Inventory": selectedStorage
+      // });
         $state.go('tab.category');
       } else {
         console.log('You are not sure');
@@ -80,11 +74,13 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
 })
 
-.controller('DetailCtrl', function($scope, $ionicPopup, $state, sharedProperties, Categories, Inventory, Product){
+.controller('DetailCtrl', function($scope, $ionicPopup, $state, $localstorage, sharedProperties, Categories, Inventory, Product){
   $scope.products = Inventory;
   $scope.products = Product;
   var index = sharedProperties.getProperty();
+  var id = $localstorage.get('dbKey');
 
+  var category = Categories[index].Category;
   $scope.cat = Categories[index].Category;
   var optional = Categories[index].Optional;
   $scope.categories = Categories;
@@ -97,25 +93,49 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
   $scope.editInventory = function(form, invent){
     if(form.$valid){
-      var full = invent.full;
+      if(typeof invent.full != "undefined"){
+        var full = invent.full;
+      }else{
+        var full = null;
+      }
+
       if(typeof invent.half != "undefined"){
         var half = invent.half;
       }else{
         var half = null;
       }
 
-      console.log(full);
-      console.log(half);
-
       var now = Firebase.ServerValue.TIMESTAMP;
       var local = new Date().getDate();
 
-      Product.on('child_added', function(snapshot){
-        snapshot.ref().child("Products").update({
-          'Boxes' : full,
-          'Bottles' : half
+      var ref = new Firebase("https://testdb-1.firebaseio.com/");
+      var inventoryRef = ref.child("Inventories");
+      var lineRef = inventoryRef.child(id);
+      var check = lineRef.child(category);
+      console.log(check.value);
+      if(typeof check == "undefined"){
+        lineRef.child(category).update({
+          'Boxes': ({
+             full
+          }),
+          'Bottles': ({
+            half
+          })
         });
-      });
+      }else{
+        check.update({
+          'Boxes': full,
+          'Bottles': half
+        })
+      }
+
+
+      // Product.on('child_added', function(snapshot){
+      //   snapshot.ref().child("Products").update({
+      //     'Boxes' : full,
+      //     'Bottles' : half
+      //   });
+      // });
     }
     else{
       var alertPopup = $ionicPopup.alert({
