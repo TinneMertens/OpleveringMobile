@@ -34,34 +34,65 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
   //Functie om inventaris aan te maken in firebase
   $scope.makeInventory = function(checked){
-    var confirmPopup = $ionicPopup.confirm({
-      title: 'Bevestiging',
-      template: 'Wilt u een nieuwe inventaris aanmaken?'
-    });
-    confirmPopup.then(function(res) {
-      if(res) {
         var selectedStorage = checked.check;
         var id = dt+selectedStorage;
 
         //Effectief toevoegen
         var ref = new Firebase("https://testdb-1.firebaseio.com/");
         var inventoryRef = ref.child("Inventories");
+        inventoryRef.once("value", function(snapshot){
+          if (!snapshot.hasChild(id)){
+            var confirmPopup = $ionicPopup.confirm({
+               title: 'Bevestiging',
+               template: 'Wilt u een nieuwe inventaris aanmaken?'
+             });
+           confirmPopup.then(function(res) {
+               if(res) {
+                inventoryRef.child(id).set({
+                  "Date" : Firebase.ServerValue.TIMESTAMP,
+                  "Inventory": selectedStorage
+                });
+                //locaal opslaan van de inventarisID, zodat we deze in andere controllers ook kunnen gebruiken
+                $localstorage.set('dbKey', id);
 
-        inventoryRef.child(id).set({
-          "Date" : Firebase.ServerValue.TIMESTAMP,
-          "Inventory": selectedStorage
-        });
-
-        //locaal opslaan van de inventarisID, zodat we deze in andere controllers ook kunnen gebruiken
-        $localstorage.set('dbKey', id);
-
-        //Ga naar andere pagina
-        $state.go('tab.category');
-      } else {
-        console.log('You are not sure');
-      }
-    });
-  }
+                //Ga naar andere pagina
+                $state.go('tab.category');
+              }
+            })
+          }
+          else{
+            // An elaborate, custom popup
+            var alertPopup = $ionicPopup.show({
+              // template: '<input type="password" ng-model="data.wifi">',
+              title: 'Opgelet!',
+              subTitle: 'U hebt vandaag al een inventaris toegevoegd, wilt u deze aanpassen of verwijderen?',
+              scope: $scope,
+              buttons: [
+                { text: 'Verwijderen',
+                  onTap: function(e){
+                    var lineRef = inventoryRef.child(id);
+                    lineRef.remove();
+                  }
+                },
+                {
+                  text: 'Aanpassen',
+                  // type: 'button-positive',
+                  onTap: function(e) {
+                    //Ga naar andere pagina
+                    $state.go('tab.category');
+                  }
+                }
+              ]
+            });
+           };
+          // }
+        })
+      // } else {
+        // console.log('You are not sure');
+      // }
+    // });
+  // }
+}
 })
 
 //Controller voor het overzicht van categorieën bij inventaris toevoegen
