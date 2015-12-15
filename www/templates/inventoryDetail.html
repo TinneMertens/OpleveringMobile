@@ -18,14 +18,51 @@
           Toevoegen
         </button>
       </div>
-
-      <ion-list>
-        <ion-item class="item-button-right" ng-repeat="check in checks" align="left">
-          <p>volle bak: {{check.full}}</p>
-          <!-- <p>halve bak: {{check.half}}</p> -->
-          <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
-        </ion-item>
-      </ion-list>
     </form>
+      <div>
+        <label class="item item-button-right">
+          Aantal volle bakken: {{checks}}
+          <div class="buttons">
+            <button class=" button button-clear icon button-icon ion-ios-compose-outline" ng-click="showEdit('full')"></button>
+            <!-- <button class=" button button-clear icon button-icon ion-ios-trash-outline" ng-click="showEdit('half')"></button> -->
+          </div>
+         </label>
+       </div>
+       <div ng-if="halfBoxes">
+         <label class="item item-button-right" ng-click="">
+           Aantal losse flessen: {{halfs}}
+           <div class="buttons">
+             <button class=" button button-clear icon button-icon ion-ios-compose-outline" ng-click="showEdit('half')"></button>
+             <button class=" button button-clear icon button-icon ion-ios-trash-outline" ng-click="showEdit('half')"></button>
+           </div>
+           <div class=" item-button-right" ng-click="">
+             Aantal bakken: {{boxes}}
+             <!-- <div class="buttons">
+               <button class=" button button-clear icon button-icon ion-ios-compose-outline" ng-click="showEdit"></button>
+             </div> -->
+           </div>
+          </label>
+        </div>
+
   </ion-content>
 </ion-view>
+<script id="edit.html" type="text/ng-template">
+  <div class="modal">
+    <ion-header-bar class="bar-secondary">
+      <h1 class="title">Verwijderen</h1>
+      <button class="button button-clear button-positive" ng-click="closeNewTask()">Cancel</button>
+    </ion-header-bar>
+    <ion-content>
+      <form ng-submit="edit()">
+        <div class="list">
+          <label class="item item-input">
+            <input type="text" placeholder="What do you need to do?" ng-model="task.title">
+          </label>
+        </div>
+        <div class="padding">
+          <button type="submit" class="button button-block button-positive"> Create task </button>
+        </div>
+      </form>
+    </ion-content>
+  </div>
+</script>

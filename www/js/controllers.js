@@ -101,7 +101,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 })
 
 //Controller voor het toevoegen van boxes en cases bij inventaris
-.controller('DetailCtrl', function($scope, $ionicPopup, $state, $localstorage, Categories, Inventory, Product){
+.controller('DetailCtrl', function($scope, $ionicPopup, $state, $localstorage, $ionicModal, $window, Categories, Inventory, Product){
   $scope.products = Inventory;
   $scope.products = Product;
 
@@ -119,8 +119,10 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   //aantal flessen zichtbaar maken of niet
   if(optional == true){
     $scope.optional = true;
+    $scope.halfBoxes = true;
   }else{
     $scope.optional = false;
+    $scope.halfBoxes = false;
   }
 
   //Toevoegen van producten aan inventaris
@@ -130,15 +132,42 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   var lineRef = inventoryRef.child(id);
   var productsRef = lineRef.child('Products');
   var check = productsRef.child(category);
+  var full = check.child("Full");
+  var half = check.child("Half");
 
-  check.on("value", function(snapshot) {
+  full.on("value", function(snapshot) {
     var newPost = snapshot.val();
-    $scope.checks = newPost;
+    $scope.checks = newPost.full;
+  })
+  half.on("value", function(snapshot){
+    var halfs = snapshot.val();
+    $scope.halfs = halfs.half;
+    $scope.boxes = halfs.boxes;
   })
 
   //Initialiseer variabelen om boxes en halve boxes op te tellen
-  var newFull=null;
-  var newHalf=null;
+  var exFull;
+  var exHalf;
+
+  //Kijken of er al iets in de database zit
+  full.on("value", function(snapshot){
+    exFull = snapshot.val();
+  })
+  half.on("value", function(snapshot){
+    exHalf = snapshot.val();
+  })
+
+  if(exFull != null){
+    var newFull=exFull.full;
+  }else{
+    newFull = null;
+  };
+
+  if(exHalf != null){
+    var newHalf=exHalf.half;
+  }else{
+    newHalf = null;
+  }
   var boxes=null;
 
   $scope.editInventory = function(form, invent){
@@ -157,33 +186,15 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
         var half = null;
       }
 
-      var exFull;
-      var exHalf;
-      //Kijken of er al iets in de database zit
-      check.child("Full").on("value", function(snapshot){
-        exFull = snapshot.val();
-      })
-      check.child("Half").on("value", function(snapshot){
-        exHalf = snapshot.val();
-      })
-
-      if(exFull != null){
-        newFull += full;
-      }else{
-        newFull = full;
-      };
-      if(exHalf != null){
-        newHalf += half;
-      }else{
-        newHalf = half;
-      };
+      newFull += full;
+      newHalf += half;
 
       check.child("Full").set({
-        newFull
+        "full": newFull
       })
       check.child("Half").set({
-        newHalf,
-        boxes
+        "half": newHalf,
+        "boxes": boxes
       })
     }
     else{
@@ -195,6 +206,50 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
          $state.go('tab.inventoryDetail');
        });
     }
+  }
+
+  $scope.showEdit = function(type){
+    $scope.data = {}
+
+    // An elaborate, custom popup
+    var myPopup = $ionicPopup.show({
+      template: '<input type="number" ng-model="data.min">',
+      title: 'Enter Wi-Fi Password',
+      subTitle: 'Please use normal things',
+      scope: $scope,
+      buttons: [
+        { text: 'Cancel' },
+        {
+          text: '<b>Save</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            if (!$scope.data.min) {
+              //don't allow the user to close unless he enters wifi password
+              e.preventDefault();
+            } else {
+              var result = $scope.data.min;
+              if(type == "full"){
+                newFull -= result;
+                check.child("Full").set({
+                  "full": newFull
+                })
+              }else{ if(type =="half"){
+                newHalf -= result;
+                check.child("Half").set({
+                  "half": newHalf,
+                  "boxes": boxes
+                })
+              }}
+            }
+          }
+        }
+      ]
+    });
+    myPopup.then(function(res) {
+
+      console.log('Tapped!', res);
+    });
+    // $window.location.reload(true)
   }
 })
 
