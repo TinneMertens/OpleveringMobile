@@ -18,6 +18,14 @@
           Toevoegen
         </button>
       </div>
+
+      <ion-list>
+        <ion-item class="item-button-right" ng-repeat="check in checks" align="left">
+          <p>volle bak: {{check.full}}</p>
+          <!-- <p>halve bak: {{check.half}}</p> -->
+          <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
+        </ion-item>
+      </ion-list>
     </form>
   </ion-content>
 </ion-view>
