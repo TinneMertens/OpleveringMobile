@@ -135,6 +135,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   var full = check.child("Full");
   var half = check.child("Half");
 
+  var numberBox = null;
   full.on("value", function(snapshot) {
     var newPost = snapshot.val();
     $scope.checks = newPost.full;
@@ -142,6 +143,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   half.on("value", function(snapshot){
     var halfs = snapshot.val();
     $scope.halfs = halfs.half;
+   numberBox = halfs.boxes;
     $scope.boxes = halfs.boxes;
   })
 
@@ -165,22 +167,23 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
   if(exHalf != null){
     var newHalf=exHalf.half;
+    var boxes = exHalf.boxes;
   }else{
     newHalf = null;
+    var boxes = null;
   }
-  var boxes=null;
 
-  $scope.editInventory = function(form, invent){
+  $scope.editInventory = function(form, invent, inventory){
     //form.$valid -> kijken of alles in de form netjes is ingevuld
     if(form.$valid){
-      if(typeof invent.full != "undefined"){
+      if(typeof invent != "undefined"){
         var full = invent.full;
       }else{
         var full = null;
       }
 
-      if(typeof invent.half != "undefined"){
-        var half = invent.half;
+      if(typeof inventory.half != "undefined"){
+        var half = inventory.half;
         boxes++;
       }else{
         var half = null;
@@ -206,6 +209,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
          $state.go('tab.inventoryDetail');
        });
     }
+
   }
 
   $scope.showEdit = function(type){
@@ -233,13 +237,19 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
                 check.child("Full").set({
                   "full": newFull
                 })
-              }else{ if(type =="half"){
+              }else if(type =="half"){
                 newHalf -= result;
                 check.child("Half").set({
                   "half": newHalf,
                   "boxes": boxes
                 })
-              }}
+              }else if (type == "boxes") {
+                boxes -= result;
+                check.child("Half").set({
+                  "half": newHalf,
+                  "boxes": boxes
+                })
+              }
             }
           }
         }

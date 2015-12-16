@@ -1,6 +1,6 @@
 <ion-view view-title={{cat}}>
   <ion-content class="padding">
-    <form name="inventory" ng-submit="editInventory(inventory, invent)" novalidate>
+    <form name="inventory" ng-submit="editInventory(inventory, invent, inventory)" novalidate>
       <div class="list">
         <label class="item item-input item-floating-label">
           <span class="input-label"><p>Aantal volle bakken/boxes</p></span>
@@ -10,7 +10,7 @@
         <div ng-if="optional">
           <label class="item item-input item-floating-label">
             <span class="input-label"><p>Aantal (losse) flessen</p></span>
-            <input type="number" ng-model="invent.half" placeholder="Aantal (losse) flessen" max={{size}}>
+            <input type="number" ng-model="inventory.half" placeholder="Aantal (losse) flessen" max={{size}}>
           </label>
         </div>
         <br>
@@ -19,12 +19,32 @@
         </button>
       </div>
     </form>
-      <div>
+    <ion-list>
+      <ion-item class="item-button-right">
+        Volle bakken: {{checks}}
+        <a class="button button-icon icon ion-ios-compose-outline" ng-click="showEdit('full')"></a>
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-item class="item-button-right">
+        Aantal losse flessen: {{halfs}}
+        <a class="button button-icon icon ion-ios-compose-outline" ng-click="showEdit('half')"></a>
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-item class="item-button-right">
+        Aantal bakken: {{boxes}}
+        <a class="button button-icon icon ion-ios-compose-outline" ng-click="showEdit('boxes')"></a>
+      </ion-item>
+    </ion-list>
+      <!-- <div>
         <label class="item item-button-right">
           Aantal volle bakken: {{checks}}
           <div class="buttons">
             <button class=" button button-clear icon button-icon ion-ios-compose-outline" ng-click="showEdit('full')"></button>
-            <!-- <button class=" button button-clear icon button-icon ion-ios-trash-outline" ng-click="showEdit('half')"></button> -->
+            <button class=" button button-clear icon button-icon ion-ios-trash-outline" ng-click="remove('full')"></button>
           </div>
          </label>
        </div>
@@ -33,16 +53,16 @@
            Aantal losse flessen: {{halfs}}
            <div class="buttons">
              <button class=" button button-clear icon button-icon ion-ios-compose-outline" ng-click="showEdit('half')"></button>
-             <button class=" button button-clear icon button-icon ion-ios-trash-outline" ng-click="showEdit('half')"></button>
+             <button class=" button button-clear icon button-icon ion-ios-trash-outline" ng-click="remove('half')"></button>
            </div>
            <div class=" item-button-right" ng-click="">
              Aantal bakken: {{boxes}}
-             <!-- <div class="buttons">
+             <div class="buttons">
                <button class=" button button-clear icon button-icon ion-ios-compose-outline" ng-click="showEdit"></button>
-             </div> -->
+             </div>
            </div>
           </label>
-        </div>
+        </div> -->
 
   </ion-content>
 </ion-view>
