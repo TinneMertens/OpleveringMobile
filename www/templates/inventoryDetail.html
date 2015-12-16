@@ -22,23 +22,34 @@
     <ion-list>
       <ion-item class="item-button-right">
         Volle bakken: {{checks}}
-        <a class="button button-icon icon ion-ios-compose-outline" ng-click="showEdit('full')"></a>
+        <div class="buttons">
+          <a class="button button-icon icon ion-ios-minus-outline" ng-click="showEdit('full')"></a>
+          <a class="button button-icon icon ion-ios-trash-outline" ng-click="remove('full')"></a>
+        </div>
       </ion-item>
     </ion-list>
+    <div ng-if="optional">
+      <ion-list>
+        <ion-item class="item-button-right">
+          Aantal losse flessen: {{halfs}}
+          <div class="buttons">
+            <a class="button button-icon icon ion-ios-minus-outline" ng-click="showEdit('half')"></a>
+            <a class="button button-icon icon ion-ios-trash-outline" ng-click="remove('half')"></a>
+          </div>
+        </ion-item>
+      </ion-list>
 
-    <ion-list>
-      <ion-item class="item-button-right">
-        Aantal losse flessen: {{halfs}}
-        <a class="button button-icon icon ion-ios-compose-outline" ng-click="showEdit('half')"></a>
-      </ion-item>
-    </ion-list>
+      <ion-list>
+        <ion-item class="item-button-right">
+          Aantal bakken: {{boxes}}
+          <div class="buttons">
+            <a class="button button-icon icon ion-ios-minus-outline" ng-click="showEdit('boxes')"></a>
+            <a class="button button-icon icon ion-ios-trash-outline" ng-click="remove('boxes')"></a>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
 
-    <ion-list>
-      <ion-item class="item-button-right">
-        Aantal bakken: {{boxes}}
-        <a class="button button-icon icon ion-ios-compose-outline" ng-click="showEdit('boxes')"></a>
-      </ion-item>
-    </ion-list>
       <!-- <div>
         <label class="item item-button-right">
           Aantal volle bakken: {{checks}}

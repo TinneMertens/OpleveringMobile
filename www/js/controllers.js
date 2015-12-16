@@ -101,7 +101,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 })
 
 //Controller voor het toevoegen van boxes en cases bij inventaris
-.controller('DetailCtrl', function($scope, $ionicPopup, $state, $localstorage, $ionicModal, $window, Categories, Inventory, Product){
+.controller('DetailCtrl', function($scope, $ionicPopup, $state, $localstorage, $ionicModal, $window, $ionicHistory, Categories, Inventory, Product){
   $scope.products = Inventory;
   $scope.products = Product;
 
@@ -134,8 +134,9 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   var check = productsRef.child(category);
   var full = check.child("Full");
   var half = check.child("Half");
+  pathFull = full.toString();
+  pathHalf = half.toString();
 
-  var numberBox = null;
   full.on("value", function(snapshot) {
     var newPost = snapshot.val();
     $scope.checks = newPost.full;
@@ -143,7 +144,6 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   half.on("value", function(snapshot){
     var halfs = snapshot.val();
     $scope.halfs = halfs.half;
-   numberBox = halfs.boxes;
     $scope.boxes = halfs.boxes;
   })
 
@@ -170,7 +170,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     var boxes = exHalf.boxes;
   }else{
     newHalf = null;
-    var boxes = null;
+    var boxes = 0;
   }
 
   $scope.editInventory = function(form, invent, inventory){
@@ -195,6 +195,11 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
       check.child("Full").set({
         "full": newFull
       })
+
+      if(typeof boxes == "undefined"){
+        boxes = 0;
+      }
+
       check.child("Half").set({
         "half": newHalf,
         "boxes": boxes
@@ -218,8 +223,8 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     // An elaborate, custom popup
     var myPopup = $ionicPopup.show({
       template: '<input type="number" ng-model="data.min">',
-      title: 'Enter Wi-Fi Password',
-      subTitle: 'Please use normal things',
+      title: 'Verwijderen',
+      subTitle: 'Geef het aantal in dat u wilt verwijderen.',
       scope: $scope,
       buttons: [
         { text: 'Cancel' },
@@ -255,11 +260,24 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
         }
       ]
     });
-    myPopup.then(function(res) {
-
-      console.log('Tapped!', res);
-    });
-    // $window.location.reload(true)
+  }
+    // myPopup.then(function(res) {
+    //   console.log('Tapped!', res);
+    // });
+  $scope.remove = function(type){
+    if(type == "full"){
+      check.child("Full").remove();
+      newFull = null;
+      $scope.checks = null;
+    }else if (type == "half") {
+      half.remove();
+      newHalf = null;
+      $scope.halfs = null;
+    }else if (type == "boxes") {
+      half.child("boxes").remove();
+      boxes = null;
+      $scope.boxes = null;
+    }
   }
 })
 
