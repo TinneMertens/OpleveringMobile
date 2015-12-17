@@ -119,10 +119,8 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   //aantal flessen zichtbaar maken of niet
   if(optional == true){
     $scope.optional = true;
-    $scope.halfBoxes = true;
   }else{
     $scope.optional = false;
-    $scope.halfBoxes = false;
   }
 
   //Toevoegen van producten aan inventaris
@@ -132,45 +130,47 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   var lineRef = inventoryRef.child(id);
   var productsRef = lineRef.child('Products');
   var check = productsRef.child(category);
-  var full = check.child("Full");
-  var half = check.child("Half");
-  pathFull = full.toString();
-  pathHalf = half.toString();
-
-  full.on("value", function(snapshot) {
-    var newPost = snapshot.val();
-    $scope.checks = newPost.full;
-  })
-  half.on("value", function(snapshot){
-    var halfs = snapshot.val();
-    $scope.halfs = halfs.half;
-    $scope.boxes = halfs.boxes;
-  })
-
+  // var full = check.child("Full");
+  // var half = check.child("Half");
+  // pathFull = full.toString();
+  // pathHalf = half.toString();
   //Initialiseer variabelen om boxes en halve boxes op te tellen
   var exFull;
   var exHalf;
+  var boxes;
 
-  //Kijken of er al iets in de database zit
-  full.on("value", function(snapshot){
-    exFull = snapshot.val();
+  check.on("value", function(snapshot) {
+    var newPost = snapshot.val();
+    $scope.fulls = newPost.full;
+    exFull = newPost.full;
+    $scope.halfs = newPost.half;
+    exHalf = newPost.half;
+    $scope.boxes = newPost.boxes;
+    boxes = newPost.boxes;
   })
-  half.on("value", function(snapshot){
-    exHalf = snapshot.val();
-  })
+
+  // Kijken of er al iets in de database zit
+  // check.on("value", function(snapshot){
+  //   exFull = snapshot.val();
+  // })
+  // check.on("value", function(snapshot){
+  //   exHalf = snapshot.val();
+  // })
 
   if(exFull != null){
-    var newFull=exFull.full;
+    var newFull=exFull;
   }else{
     newFull = null;
   };
 
   if(exHalf != null){
-    var newHalf=exHalf.half;
-    var boxes = exHalf.boxes;
+    var newHalf=exHalf;
   }else{
     newHalf = null;
-    var boxes = 0;
+  }
+
+  if(boxes == null){
+    boxes = 0;
   }
 
   $scope.editInventory = function(form, invent, inventory){
@@ -192,7 +192,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
       newFull += full;
       newHalf += half;
 
-      check.child("Full").set({
+      check.update({
         "full": newFull
       })
 
@@ -200,7 +200,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
         boxes = 0;
       }
 
-      check.child("Half").set({
+      check.update({
         "half": newHalf,
         "boxes": boxes
       })
@@ -214,7 +214,6 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
          $state.go('tab.inventoryDetail');
        });
     }
-
   }
 
   $scope.showEdit = function(type){
@@ -239,18 +238,18 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
               var result = $scope.data.min;
               if(type == "full"){
                 newFull -= result;
-                check.child("Full").set({
+                check.update({
                   "full": newFull
                 })
               }else if(type =="half"){
                 newHalf -= result;
-                check.child("Half").set({
+                check.update({
                   "half": newHalf,
                   "boxes": boxes
                 })
               }else if (type == "boxes") {
                 boxes -= result;
-                check.child("Half").set({
+                check.update({
                   "half": newHalf,
                   "boxes": boxes
                 })
@@ -266,15 +265,15 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     // });
   $scope.remove = function(type){
     if(type == "full"){
-      check.child("Full").remove();
+      check.child("full").remove();
       newFull = null;
       $scope.checks = null;
     }else if (type == "half") {
-      half.remove();
+      check.child("half").remove();
       newHalf = null;
       $scope.halfs = null;
     }else if (type == "boxes") {
-      half.child("boxes").remove();
+      check.child("boxes").remove();
       boxes = null;
       $scope.boxes = null;
     }
@@ -306,8 +305,42 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 })
 
 //Controller voor de report tab
-.controller('ReportCtrl', function($scope) {
+.controller('ReportCtrl', function($scope, $state) {
+  $scope.changePagetoSearchCat = function(){
+    $state.go('tab.searchProducts');
+  }
 
+  $scope.changePagetoSearchInStorage = function(){
+    $state.go('tab.searchInStorages');
+  }
+})
+
+.controller('searchProductsCtrl', function($scope, Categories){
+  $scope.categories = Categories;
+})
+
+.controller('searchinStoragesCtrl', function($scope, $filter, Storages){
+  $scope.storages = Storages;
+
+  //Kalender functie
+  $scope.today = function() {
+      $scope.dt = new Date();
+    };
+    $scope.today();
+
+  $scope.open = function($event) {
+    $scope.status.opened = true;
+  };
+
+  $scope.formats = ['dd-MM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+  $scope.format = $scope.formats[0];
+
+  $scope.status = {
+    opened: false
+  };
+
+  var date = $scope.dt;
+  var dt = $filter('date')(date, "dd-MM-yyyy");
 })
 
 //Controller voor de manage tab

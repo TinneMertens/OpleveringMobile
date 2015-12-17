@@ -89,6 +89,26 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
 
+  .state('tab.searchProducts', {
+    url: '/searchProducts',
+    views: {
+      'tab-report': {
+        templateUrl: 'templates/zoekProducten.html',
+        controller: 'searchProductsCtrl'
+      }
+    }
+  })
+
+  .state('tab.searchInStorages',{
+    url: '/searchInStorages',
+    views:{
+      'tab-report':{
+        templateUrl: 'templates/searchInStorages.html',
+        controller: 'searchinStoragesCtrl'
+      }
+    }
+  })
+
   .state('tab.manage', {
     url: '/manage',
     views: {

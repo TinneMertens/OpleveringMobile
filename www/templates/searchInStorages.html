@@ -1,0 +1,25 @@
+<ion-view view-title="Inglorious brewstars">
+  <ion-content class="padding">
+    <!-- <br> -->
+    <h3 align="center">Zoeken naar producten</h3>
+    <!-- <br> -->
+    <div>
+      <div class="row">
+        <div class="col col-40"><h5>Opslaagplaats</h5></div>
+        <div class="col"><select name="singleSelect" ng-model="data.singleSelect">
+          <option ng-repeat="storage in storages" value="{{storage.name}}">{{storage.name}}</option>
+        </select><br></div>
+      </div>
+      <div class="row">
+        <div class="col-25"><h5>Datum</h5></div>
+        <div class="col-75"><p class="input-group">
+          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p></div>
+      </div>
+  </div>
+
+  </ion-content>
+</ion-view>

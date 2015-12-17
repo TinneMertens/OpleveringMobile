@@ -53,4 +53,5 @@ label.item.valid-lr {
 
 .item .row, .item .col {
   padding: 0;
+  float: right;
 }
