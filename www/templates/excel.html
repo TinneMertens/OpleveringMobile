@@ -1,0 +1,57 @@
+<ion-view>
+  <ion-content class="padding">
+    <div id="exportable">
+      <table>
+        <thead>
+          <tr>
+            <td>Datum</td>
+            <td>Opslagplaats</td>
+            <td>Producten</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="inventory in inventories">
+            <td>
+              {{inventory.Date | date:'MM/dd/yy'}}
+            </td>
+            <td>
+              {{inventory.Inventory}}
+            </td>
+            <td>
+              <table>
+                <thead>
+                  <tr>
+                    <td>Categorie</td>
+                    <td>Boxes</td>
+                    <td>Vol</td>
+                    <td>Half</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="(key, product) in inventory.Products">
+                    <td>
+                      {{key}}
+                    </td>
+                    <td>
+                      {{product.boxes}}
+                    </td>
+                    <td>
+                      {{product.full}}
+                    </td>
+                    <td>
+                      {{product.half}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button class="button button-block button-dark" align="left" ng-click="exportData()">
+        Export
+      </button>
+
+  </ion-content>
+</ion-view>

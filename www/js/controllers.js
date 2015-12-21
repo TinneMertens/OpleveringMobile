@@ -130,10 +130,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   var lineRef = inventoryRef.child(id);
   var productsRef = lineRef.child('Products');
   var check = productsRef.child(category);
-  // var full = check.child("Full");
-  // var half = check.child("Half");
-  // pathFull = full.toString();
-  // pathHalf = half.toString();
+
   //Initialiseer variabelen om boxes en halve boxes op te tellen
   var exFull;
   var exHalf;
@@ -149,14 +146,6 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     boxes = newPost.boxes;
   })
 
-  // Kijken of er al iets in de database zit
-  // check.on("value", function(snapshot){
-  //   exFull = snapshot.val();
-  // })
-  // check.on("value", function(snapshot){
-  //   exHalf = snapshot.val();
-  // })
-
   if(exFull != null){
     var newFull=exFull;
   }else{
@@ -170,7 +159,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   }
 
   if(boxes == null){
-    boxes = 0;
+    boxes = 1;
   }
 
   $scope.editInventory = function(form, invent, inventory){
@@ -197,7 +186,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
       })
 
       if(typeof boxes == "undefined"){
-        boxes = 0;
+        boxes = 1;
       }
 
       check.update({
@@ -214,6 +203,8 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
          $state.go('tab.inventoryDetail');
        });
     }
+    this.invent = null;
+    this.inventory = null;
   }
 
   $scope.showEdit = function(type){
@@ -306,6 +297,10 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
 //Controller voor de report tab
 .controller('ReportCtrl', function($scope, $state) {
+  $scope.excel = function(){
+    $state.go('tab.excel');
+  }
+
   $scope.changePagetoSearchCat = function(){
     $state.go('tab.searchProducts');
   }
@@ -313,6 +308,21 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   $scope.changePagetoSearchInStorage = function(){
     $state.go('tab.searchInStorages');
   }
+})
+
+.controller('ExcelCtrl', function($scope){
+  var ref1 = new Firebase("https://testdb-1.firebaseio.com/Inventories");
+  ref1.on("value", function(snapshot){
+    $scope.inventories = snapshot.val();
+    console.log($scope.inventories);
+  })
+
+  $scope.exportData = function () {
+    var blob = new Blob([document.getElementById('exportable').innerHTML], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+    });
+    saveAs(blob, 'Report.xls')
+  };
 })
 
 .controller('searchProductsCtrl', function($scope, Categories){

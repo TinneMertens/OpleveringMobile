@@ -89,6 +89,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
 
+  .state('tab.excel', {
+    url: '/excel',
+    views: {
+      'tab-report': {
+        templateUrl: 'templates/excel.html',
+        controller: 'ExcelCtrl'
+      }
+    }
+  })
+
   .state('tab.searchProducts', {
     url: '/searchProducts',
     views: {
