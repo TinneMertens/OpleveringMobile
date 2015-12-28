@@ -9,6 +9,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
 //Controller van de pagina waar je inventarissen toevoegt
 .controller('InventoryCtrl', function($scope, $ionicTabsDelegate, $state, $ionicPopup, $filter, $localstorage, Storages, Categories, Inventory, sharedProperties) {
+
   $scope.storages = Storages;
   $scope.inventories = Inventory;
 
@@ -42,23 +43,36 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
     var inventoryRef = ref.child("Inventories");
     inventoryRef.once("value", function(snapshot){
       if (!snapshot.hasChild(id)){
-        var confirmPopup = $ionicPopup.confirm({
-           title: 'Bevestiging',
-           template: 'Wilt u een nieuwe inventaris aanmaken?'
-         });
-         confirmPopup.then(function(res) {
-           if(res) {
-              inventoryRef.child(id).set({
-                "Date" : Firebase.ServerValue.TIMESTAMP,
-                "Inventory": selectedStorage
-              });
-              //locaal opslaan van de inventarisID, zodat we deze in andere controllers ook kunnen gebruiken
-              $localstorage.set('dbKey', id);
+        var show = $localstorage.get('alerts')
+        if(show){
+          var confirmPopup = $ionicPopup.confirm({
+             title: 'Bevestiging',
+             template: 'Wilt u een nieuwe inventaris aanmaken?'
+           });
+           confirmPopup.then(function(res) {
+             if(res) {
+                inventoryRef.child(id).set({
+                  "Date" : Firebase.ServerValue.TIMESTAMP,
+                  "Inventory": selectedStorage
+                });
+                //locaal opslaan van de inventarisID, zodat we deze in andere controllers ook kunnen gebruiken
+                $localstorage.set('dbKey', id);
 
-              //Ga naar andere pagina
-              $state.go('tab.category');
-            }
-          })
+                //Ga naar andere pagina
+                $state.go('tab.category');
+              }
+            })
+          }else{
+            inventoryRef.child(id).set({
+              "Date" : Firebase.ServerValue.TIMESTAMP,
+              "Inventory": selectedStorage
+            });
+            //locaal opslaan van de inventarisID, zodat we deze in andere controllers ook kunnen gebruiken
+            $localstorage.set('dbKey', id);
+
+            //Ga naar andere pagina
+            $state.go('tab.category');
+          }
         }
         else{
           // An elaborate, custom popup
@@ -72,6 +86,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
                 onTap: function(e){
                   var lineRef = inventoryRef.child(id);
                   lineRef.remove();
+                  $state.go('tab.category');
                 }
               },
               {
@@ -297,9 +312,21 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
 //Controller voor de report tab
 .controller('ReportCtrl', function($scope, $state) {
-  $scope.excel = function(){
-    $state.go('tab.excel');
-  }
+  var ref1 = new Firebase("https://testdb-1.firebaseio.com/Inventories");
+  ref1.on("value", function(snapshot){
+    $scope.inventories = snapshot.val();
+    console.log($scope.inventories);
+  })
+
+  $scope.excel = function () {
+    var blob = new Blob([document.getElementById('exportable').innerHTML], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+    });
+    saveAs(blob, 'Report.xls')
+  };
+  // $scope.excel = function(){
+  //   $state.go('tab.excel');
+  // }
 
   $scope.changePagetoSearchCat = function(){
     $state.go('tab.searchProducts');
@@ -311,6 +338,9 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 })
 
 .controller('ExcelCtrl', function($scope){
+  $scope.$on('$ionicView.beforeEnter', function(){
+    screen.lockOrientation('landscape');
+  });
   var ref1 = new Firebase("https://testdb-1.firebaseio.com/Inventories");
   ref1.on("value", function(snapshot){
     $scope.inventories = snapshot.val();
@@ -327,6 +357,17 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
 .controller('searchProductsCtrl', function($scope, Categories){
   $scope.categories = Categories;
+
+  $scope.toggleGroup = function(group) {
+    if ($scope.isGroupShown(group)) {
+      $scope.shownGroup = null;
+    } else {
+      $scope.shownGroup = group;
+    }
+  };
+  $scope.isGroupShown = function(group) {
+    return $scope.shownGroup === group;
+  };
 })
 
 .controller('searchinStoragesCtrl', function($scope, $filter, Storages){
@@ -351,6 +392,17 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
   var date = $scope.dt;
   var dt = $filter('date')(date, "dd-MM-yyyy");
+
+  $scope.toggleGroup = function(group) {
+    if ($scope.isGroupShown(group)) {
+      $scope.shownGroup = null;
+    } else {
+      $scope.shownGroup = group;
+    }
+  };
+  $scope.isGroupShown = function(group) {
+    return $scope.shownGroup === group;
+  };
 })
 
 //Controller voor de manage tab
@@ -365,6 +417,10 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
 
   $scope.changePageTStorage = function(){
     $state.go('tab.stockage')
+  }
+
+  $scope.changePageToSettings = function(){
+    $state.go('tab.settings')
   }
 
 })
@@ -466,5 +522,12 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
       }
     });
   };
+})
 
+.controller('settingsCtrl', function($scope, $localstorage){
+  $scope.myVar = $localstorage.get('alerts');
+  $scope.changeSettings = function(alerts){
+    $localstorage.set('alerts', alerts.check);
+    console.log($localstorage.get('alerts'));
+  }
 });

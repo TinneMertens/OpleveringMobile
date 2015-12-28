@@ -1,5 +1,54 @@
 <ion-view view-title="Rapportages">
   <ion-content class="center">
+    <div id="exportable">
+      <table ng-show="false">
+        <thead>
+          <tr>
+            <td><b>Datum</b></td>
+            <td><b>Opslagplaats</b></td>
+            <td><b>Producten</b></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="inventory in inventories">
+            <td>
+              {{inventory.Date | date:'dd/MM/yy'}}
+            </td>
+            <td>
+              {{inventory.Inventory}}
+            </td>
+            <td>
+              <table>
+                <thead>
+                  <tr>
+                    <td><b>Categorie</b></td>
+                    <td><b>Boxes</b></td>
+                    <td><b>Vol</b></td>
+                    <td><b>Half</b></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="(key, product) in inventory.Products">
+                    <td>
+                      {{key}}
+                    </td>
+                    <td>
+                      {{product.boxes}}
+                    </td>
+                    <td>
+                      {{product.full}}
+                    </td>
+                    <td>
+                      {{product.half}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <button class="button button-block button-dark" class="center" ng-click="excel()">
       Overzicht Excel
     </button>

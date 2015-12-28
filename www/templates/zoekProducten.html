@@ -8,7 +8,22 @@
       <select name="singleSelect" ng-model="data.singleSelect">
         <option ng-repeat="category in categories" value="{{category.Category}}">{{category.Category}}</option>
       </select><br>
-  </div>
+      <br>
+
+      <ion-list class="has-header demo-list-icons">
+        <div>
+          <ion-item class="item-stable item-button-right" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
+              Group {{group.name}}
+              <button class="button button-clear button-stable">
+                5
+              </button>
+          </ion-item>
+          <ion-item class="item-accordion" ng-show="isGroupShown(group)">
+            test
+          </ion-item>
+        </div>
+      </ion-list>
+    </div>
 
   </ion-content>
 </ion-view>

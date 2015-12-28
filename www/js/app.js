@@ -177,9 +177,19 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       controller: 'overviewInvenCtrl'
     }
   }
+})
+
+.state('tab.settings', {
+  url: '/settings',
+  views: {
+    'tab-manage': {
+      templateUrl: 'templates/settings.html',
+      controller: 'settingsCtrl'
+    }
+  }
 });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/inventory');
+  $urlRouterProvider.otherwise('tab/inventory');
 
 });
