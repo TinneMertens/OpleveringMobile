@@ -1,6 +1,7 @@
 <ion-view view-title="Opslagplaats toevoegen">
   <ion-content>
     <form name="storageForm" ng-submit="addStorage(storageForm, storage)" novalidate>
+      <h3 align="center">Opslagplaats toevoegen</h3>
       <label class="item item-input item-stacked-label" ng-class="{ 'has-error' : storageForm.storageName.$invalid}">
         <span class="input-label">Naam</span>
         <input type="text" name="storageName" ng-model="storage.storageName" placeholder="Naam" required>
