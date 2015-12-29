@@ -3,27 +3,40 @@
     <!-- <br> -->
     <h3 align="center">Zoeken naar producten</h3>
     <!-- <br> -->
-    <div>
       <h4>Kies een categorie.</h4>
-      <select name="singleSelect" ng-model="data.singleSelect">
+      <select name="singleSelect" ng-model="data.singleSelect" ng-change="searchInventory(data)">
         <option ng-repeat="category in categories" value="{{category.Category}}">{{category.Category}}</option>
       </select><br>
       <br>
 
       <ion-list class="has-header demo-list-icons">
-        <div>
-          <ion-item class="item-stable item-button-right" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
-              Group {{group.name}}
-              <button class="button button-clear button-stable">
-                5
-              </button>
+        <div ng-repeat="item in show">
+          <ion-item class="item-icon-left item-button-right" ng-click="toggleGroup(item)" ng-class="{active: isGroupShown(item)}">
+            <i class="icon" ng-class="isGroupShown(item) ? 'ion-ios-minus-empty' : 'ion-ios-plus-empty'"></i>
+            {{item}}
+            <button class="button button-clear button-stable">
+              5
+            </button>
           </ion-item>
-          <ion-item class="item-accordion" ng-show="isGroupShown(group)">
+          <ion-item class="item-accordion" ng-show="isGroupShown(item)">
             test
           </ion-item>
         </div>
       </ion-list>
-    </div>
 
+      <!-- <ion-list class="has-header demo-list-icons">
+        <div>
+          <ion-item ng-repeat="item in show" class="item-stable item-button-right" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
+              {{item}}
+              <button class="button button-clear button-stable">
+                5
+              </button>
+              <ion-item class="item-accordion" ng-show="isGroupShown(group)">
+                test
+              </ion-item>
+          </ion-item>
+
+        </div>
+      </ion-list> -->
   </ion-content>
 </ion-view>

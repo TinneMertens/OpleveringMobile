@@ -355,19 +355,76 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   };
 })
 
-.controller('searchProductsCtrl', function($scope, Categories){
+.controller('searchProductsCtrl', function($scope, $firebaseObject, $filter, Categories, Inventory){
   $scope.categories = Categories;
 
-  $scope.toggleGroup = function(group) {
-    if ($scope.isGroupShown(group)) {
-      $scope.shownGroup = null;
-    } else {
-      $scope.shownGroup = group;
+  $scope.searchInventory = function(data){
+    var word = data.singleSelect;
+
+    var ref = new Firebase('https://testdb-1.firebaseio.com/');
+    var testRef = new Firebase('https://testdb-1.firebaseio.com/Inventories/')
+    var invenRef = ref.child('Inventories');
+    var prodRef = invenRef.child('Products');
+
+    var arrInv = [];
+    var arrDate = [];
+
+    invenRef.on("child_added", function(snapshot){
+      var data = snapshot.val();
+      var store = data.Inventory;
+      var prod = data.Products;
+
+      var newArr = [];
+      var test = Object.keys(prod);
+
+      for( var i = 0; i < test.length; i++){
+        if (test[i] == word) {
+         var convertDate = $filter('date')(data.Date, 'dd-MM-yyyy');
+         arrDate.push(convertDate);
+         arrInv.push(data.Inventory);
+        };
+      };
+
+      for (var y = arrInv.length - 1; y > 0; y--) {
+        var found = undefined;
+        for (var z = 0; z < newArr.length; z++) { //
+          if (arrInv[y] === newArr[z]) {
+            found = true;
+            break;
+          };
+        };
+        if (!found) {
+        newArr.push(arrInv[y]);
+        }
+      };
+
+      $scope.show = newArr;
+    });
+ };
+
+ $scope.groups = [];
+  for (var i=0; i<10; i++) {
+    $scope.groups[i] = {
+      name: i,
+      items: []
+    };
+    for (var j=0; j<3; j++) {
+      $scope.groups[i].items.push(i + '-' + j);
     }
-  };
-  $scope.isGroupShown = function(group) {
-    return $scope.shownGroup === group;
-  };
+  }
+
+ $scope.toggleGroup = function(group) {
+   if ($scope.isGroupShown(group)) {
+     $scope.shownGroup = null;
+   } else {
+     $scope.shownGroup = group;
+   }
+ };
+ $scope.isGroupShown = function(group) {
+   return $scope.shownGroup === group;
+ };
+
+
 })
 
 .controller('searchinStoragesCtrl', function($scope, $filter, Storages){
