@@ -145,6 +145,18 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
   var lineRef = inventoryRef.child(id);
   var productsRef = lineRef.child('Products');
   var check = productsRef.child(category);
+  var totalBoxenRef = productsRef.child('TotalBoxes');
+  var totalBottlesRef = productsRef.child('TotalBottles');
+
+  var exCountBoxes = 0;
+  var exCountBottles = 0;
+
+  productsRef.on("value", function(snapshot){
+    var oldPost = snapshot.val();
+
+    exCountBoxes = oldPost.TotalBoxes;
+    exCountBottles = oldPost.TotalBottles;
+  })
 
   //Initialiseer variabelen om boxes en halve boxes op te tellen
   var exFull;
@@ -186,8 +198,10 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
         var full = null;
       }
 
-      if(typeof inventory.half != "undefined"){
-        var half = inventory.half;
+      console.log(inventory);
+      if(typeof inventory != "undefined"){
+        var half = inventory.test;
+
         boxes++;
       }else{
         var half = null;
@@ -196,12 +210,23 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
       newFull += full;
       newHalf += half;
 
+      var sizeBox =  Categories[index].Size;
+      var totalBox = full + boxes;
+      var totalBot = full * sizeBox + half;
+
+      exCountBoxes += totalBox;
+      exCountBottles += totalBot;
+
+      productsRef.update({
+        "TotalBoxes": exCountBoxes ,
+        "TotalBottles": exCountBottles
+      })
       check.update({
         "full": newFull
       })
 
       if(typeof boxes == "undefined"){
-        boxes = 1;
+        boxes = 0;
       }
 
       check.update({
@@ -218,8 +243,8 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
          $state.go('tab.inventoryDetail');
        });
     }
-    this.invent = null;
-    this.inventory = null;
+    this.invent = undefined;
+    this.test = undefined;
   }
 
   $scope.showEdit = function(type){
@@ -242,13 +267,28 @@ angular.module('starter.controllers', ['starter.services', 'firebase'])
               e.preventDefault();
             } else {
               var result = $scope.data.min;
+              var sizeBox =  Categories[index].Size;
+
               if(type == "full"){
                 newFull -= result;
+                exCountBoxes -= result;
+                exCountBottles -= result * sizeBox;
+
+                productsRef.update({
+                  "TotalBoxes": exCountBoxes,
+                  "TotalBottles": exCountBottles
+                })
+
                 check.update({
                   "full": newFull
                 })
               }else if(type =="half"){
                 newHalf -= result;
+                exCountBottles -= result;
+
+                productsRef.update({
+                  "TotalBottles": exCountBottles
+                })
                 check.update({
                   "half": newHalf,
                   "boxes": boxes
