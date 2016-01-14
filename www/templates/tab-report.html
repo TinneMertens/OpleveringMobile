@@ -1,6 +1,6 @@
-<ion-view view-title="Rapportages">
+<ion-view>
   <ion-content class="center">
-    <div id="exportable">
+    <div id="exportable" ng-show="false">
       <table ng-show="false">
         <thead>
           <tr>
@@ -49,9 +49,11 @@
         </tbody>
       </table>
     </div>
+    {{csv}}
     <button class="button button-block button-dark" class="center" ng-click="excel()">
       Overzicht Excel
     </button>
+    <!-- <embed src="{{url}}" width="200" height="200"></embed> -->
 
     <button class="button button-block button-dark" class="center" ng-click="changePagetoSearchCat()">
       Zoeken naar producten

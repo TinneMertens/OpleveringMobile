@@ -2,24 +2,37 @@
   <ion-content class="padding">
     <!-- <br> -->
     <h3 align="center">Zoeken naar producten</h3>
-    <!-- <br> -->
-    <div>
-      <div class="row">
+    <br>
+    <div align="center">
+      <div style="display:inline-block; height:250px;">
+        <uib-datepicker icon-prefix="fa" ng-model="dt" min-date="minDate" show-weeks="false" custom-class="getDayClass(date, mode)"></uib-datepicker>
+      </div>
+      <!-- <div class="row">
         <div class="col col-40"><h5>Opslaagplaats</h5></div>
-        <div class="col"><select name="singleSelect" ng-model="data.singleSelect">
+        <div class="col col-10"></div>
+        <div class="col"><p class="input-group">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default"><i class="ion-ios-location-outline"></i></button>
+          </span>
+          <select name="singleSelect" ng-model="data.singleSelect" style="height:33px">
           <option ng-repeat="storage in storages" value="{{storage.name}}">{{storage.name}}</option>
-        </select><br></div>
+        </select><br></p></div>
       </div>
       <div class="row">
-        <div class="col-25"><h5>Datum</h5></div>
-        <div class="col-75"><p class="input-group">
-          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+        <div class="col col-40"><h5>Datum</h5></div>
+        <div class="col col-10"></div>
+        <div class="col col-75">
+
+          <p class="input-group">
           <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+            <button type="button" class="btn btn-default" ng-click="open($event)"><i class="ion-ios-calendar-outline"></i></button>
           </span>
-        </p></div>
+          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" custom-class="getDayClass(date, mode)" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+        </p>
+       </div> -->
       </div>
 
+      <br>
       <ion-list class="has-header demo-list-icons">
         <div>
           <ion-item class="item-stable item-button-right" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">

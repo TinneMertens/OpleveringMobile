@@ -1,4 +1,4 @@
-<ion-view view-title="Beheer" align="center">
+<ion-view>
   <ion-content class="center" on-swipe-right="goBack()" on-swipe-left="goForward()">
     <!-- <div class = "row">
       <div class= "col"> -->
@@ -14,9 +14,8 @@
           Opslagplaatsen
         </button>
 
-        <button class="button button-block button-dark" class="center" ng-click="changePageToSettings()">
-          Instellingen
-        </button>
+        <ion-checkbox ng-model="isChecked.checked" ng-change="changeSettings(isChecked)" class="checkbox-assertive">Waarschuwingen ontvangen</ion-checkbox>
+
       <!-- </div>
     </div> -->
 

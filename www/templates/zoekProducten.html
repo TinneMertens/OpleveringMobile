@@ -1,10 +1,10 @@
-<ion-view view-title="Zoeken naar producten">
+<ion-view>
   <ion-content class="padding">
     <!-- <br> -->
     <h3 align="center">Zoeken naar producten</h3>
     <!-- <br> -->
-      <h4>Kies een categorie.</h4>
-      <select name="singleSelect" ng-model="data.singleSelect" ng-change="searchInventory(data)">
+      <select style="height: 35px; width: 200px" name="singleSelect" ng-model="data.singleSelect" ng-change="searchInventory(data)">
+        <option value ="" selected>Kies een categorie</option>
         <option ng-repeat="category in categories" value="{{category.Category}}">{{category.Category}}</option>
       </select><br>
       <br>

@@ -70,3 +70,16 @@ label.item.valid-lr {
 .list .item.item-accordion.ng-hide-remove {
   display: block !important;
 }
+ /*Kalender*/
+.full button {
+  background-color: limegreen;
+  border-radius: 2px;
+  color: black;
+}
+.partially button {
+  background-color: orange;
+  border-radius: 32px;
+  color: black;
+}
+.glyphicon-chevron-left:before { ion-ios-arrow-left; }
+.glyphicon-chevron-right:before { ion-ios-arrow-right; }

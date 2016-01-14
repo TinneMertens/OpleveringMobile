@@ -4,9 +4,9 @@
     <h3 align="center">Inventaris toevoegen</h3>
     <span>Datum</span>
       <p class="input-group">
-        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+        <input type="text" class="form-control" ng-readonly="true" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
         <span class="input-group-btn">
-          <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          <button type="button" class="btn btn-default"><i class="ion-ios-calendar-outline"></i></button>
         </span>
       </p>
       <p><b>Kies de gewenste opslagplaats</b></p>

@@ -1,5 +1,7 @@
-<ion-view view-title="Opslagplaatsen">
-  <ion-content class="padding" on-swipe-right="goBack()" on-swipe-left="goForward()">
+<ion-view>
+  <ion-content>
+    <h3 align="center">Opslagplaatsen</h3>
+    <br>
     <ion-list>
       <ion-item class="item-button-right" ng-repeat="storage in storages" align="left">
         <p>{{storage.name}}</p>

@@ -1,5 +1,6 @@
-<ion-view view-title="Overzicht inventarissen" align="center">
+<ion-view>
   <ion-content>
+    <h3 align="center">Overzicht inventarissen</h3>
     <!-- <div class="list"> -->
     <!-- <div align="center">
       <br>
@@ -8,7 +9,7 @@
     <br>
     <ion-list>
       <ion-item class="item-button-right" ng-repeat="inventory in inventories" align="left">
-        <p>{{inventory.Date | date:'dd/MM/yyyy'}}</p>
+        <p>{{inventory.Date | date:'dd/MM/yyyy'}} {{inventory.Inventory}}</p>
         <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
       </ion-item>
     </ion-list>
