@@ -156,17 +156,26 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   var exCountBoxes = 0;
   var exCountBottles = 0;
 
-  productsRef.on("value", function(snapshot){
+  lineRef.on("value", function(snapshot){
     var oldPost = snapshot.val();
-
     exCountBoxes = oldPost.TotalBoxes;
     exCountBottles = oldPost.TotalBottles;
   })
+
+  if(typeof exCountBoxes == "undefined"){
+    exCountBoxes = 0;
+  }
+
+  if(typeof exCountBottles == "undefined"){
+    exCountBottles = 0;
+  }
 
   //Initialiseer variabelen om boxes en halve boxes op te tellen
   var exFull;
   var exHalf;
   var boxes;
+  var totalBoxesCat;
+  var totalBottlesCat;
 
   check.on("value", function(snapshot) {
     var newPost = snapshot.val();
@@ -176,6 +185,8 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
     exHalf = newPost.half;
     $scope.boxes = newPost.boxes;
     boxes = newPost.boxes;
+    totalBoxesCat = newPost.totalBoxesCat;
+    totalBottlesCat = newPost.totalBottlesCat;
   })
 
   if(exFull != null){
@@ -193,8 +204,14 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   if(boxes == null){
     boxes = 0;
   }
-  console.log("Aantal boxen in het begin " + boxes);
-  var newBox;
+
+  if(typeof totalBoxesCat == "undefined"){
+    totalBoxesCat = 0;
+  }
+
+  if(typeof totalBottlesCat == "undefined"){
+    totalBottlesCat = 0;
+  }
 
   $scope.editInventory = function(form, invent, inventory){
     //form.$valid -> kijken of alles in de form netjes is ingevuld
@@ -225,21 +242,25 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
 
 
       var totalBox = full + newBox;
-      console.log("totale boxes: " + totalBox);
       var totalBot = full * sizeBox + half;
 
       exCountBoxes += totalBox;
       exCountBottles += totalBot;
+      totalBoxesCat += totalBox;
+      totalBottlesCat += totalBot;
+
       console.log(exCountBoxes);
 
-      productsRef.update({
+      lineRef.update({
         "TotalBottles": exCountBottles,
         "TotalBoxes": exCountBoxes
       })
 
       check.update({
         "half": newHalf,
-        "boxes": boxes
+        "boxes": boxes,
+        "totalBoxesCat": totalBoxesCat,
+        "totalBottlesCat": totalBottlesCat
       })
       check.update({
         "full": newFull
@@ -255,7 +276,6 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
         position: "center",
         addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
       });
-
     }
     else{
       var alertPopup = $ionicPopup.alert({
@@ -266,6 +286,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
          $state.go('tab.inventoryDetail');
        });
     }
+
     this.invent = undefined;
     this.test = undefined;
   }
@@ -286,46 +307,55 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
           type: 'button-positive',
           onTap: function(e) {
             if (!$scope.data.min) {
-              //don't allow the user to close unless he enters wifi password
               e.preventDefault();
             } else {
               var result = $scope.data.min;
               var sizeBox =  Categories[index].Size;
+              console.log(result);
 
               if(type == "full"){
                 newFull -= result;
                 exCountBoxes -= result;
                 exCountBottles -= result * sizeBox;
+                totalBoxesCat -= result;
+                totalBottlesCat -= result * sizeBox;
 
-                productsRef.update({
+                lineRef.update({
                   "TotalBoxes": exCountBoxes,
                   "TotalBottles": exCountBottles
                 })
 
                 check.update({
-                  "full": newFull
+                  "full": newFull,
+                  "totalBoxesCat": totalBoxesCat,
+                  "totalBottlesCat": totalBottlesCat
                 })
               }else if(type =="half"){
                 newHalf -= result;
                 exCountBottles -= result;
+                totalBottlesCat -= result;
 
-                productsRef.update({
+                lineRef.update({
                   "TotalBottles": exCountBottles
                 })
                 check.update({
                   "half": newHalf,
-                  "boxes": boxes
+                  "boxes": boxes,
+                  "totalBottlesCat": totalBottlesCat
                 })
               }else if (type == "boxes") {
                 boxes -= result;
                 exCountBoxes -= result;
+                totalBoxesCat -= result;
+
                 console.log("aftellen boxes: " + exCountBoxes);
-                productsRef.update({
+                lineRef.update({
                   "TotalBoxes": exCountBoxes
                 })
                 check.update({
                   "half": newHalf,
-                  "boxes": boxes
+                  "boxes": boxes,
+                  "totalBoxesCat": totalBoxesCat
                 })
 
               }
@@ -339,12 +369,22 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   $scope.remove = function(type){
     if(type == "full"){
       check.child("full").remove();
+
       exCountBoxes -= newFull;
       exCountBottles -= newFull * sizeBox;
-      productsRef.update({
+      totalBoxesCat -= newFull;
+      totalBottlesCat -= newFull * sizeBox;
+
+      lineRef.update({
         "TotalBoxes": exCountBoxes,
         "TotalBottles": exCountBottles
       })
+
+      check.update({
+        "totalBoxesCat": totalBoxesCat,
+        "totalBottlesCat": totalBottlesCat
+      })
+
       newFull = null;
       $scope.checks = null;
     }else if (type == "half") {
@@ -353,13 +393,25 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
       check.on("value", function(snapshot) {
         var newPost = snapshot.val();
         newBoxes = newPost.boxes;
+        half = newPost.half;
       });
-      exCountBottles -= newHalf;
+      console.log("boxes before: " + totalBoxesCat);
+      console.log("bottles before: " + totalBottlesCat);
+      console.log("remove bottles: " + half);
+      console.log("remove boxes: " + newBoxes);
+      exCountBottles -= half;
       exCountBoxes -= newBoxes;
-      console.log("Excountboxes: " + exCountBoxes)
-      productsRef.update({
+      totalBoxesCat -= newBoxes;
+      totalBottlesCat -= half;
+      console.log("boxes: " + totalBoxesCat);
+      console.log("bottles: " + totalBottlesCat);
+      lineRef.update({
         "TotalBottles": exCountBottles,
         "TotalBoxes" : exCountBoxes
+      })
+      check.update({
+        "totalBoxesCat": totalBoxesCat,
+        "totalBottlesCat": totalBottlesCat
       })
       check.child("half").remove();
       check.child("boxes").remove();
@@ -386,34 +438,6 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   }
 })
 
-//Controller voor het tonen van alle opslagplaatsen in de tab manage
-.controller('StockageCtrl', function($scope, $ionicPopup, $state, $localstorage, Storages) {
-  $scope.storages = Storages;
-
-  $scope.showConfirm = function(index) {
-    if($localstorage.get('alerts') == "true"){
-      var confirmPopup = $ionicPopup.confirm({
-        title: 'Verwijder',
-        template: 'Bent u zeker dat u dit item wilt verwijderen?'
-      });
-      confirmPopup.then(function(res) {
-        if(res) {
-          //Verwijderen van opslagplaats
-          Storages.$remove(index);
-        } else {
-          console.log('You are not sure');
-        }
-      });
-    }else{
-      Storages.$remove(index);
-    }
-  };
-
-  $scope.changePageToAdd = function(){
-    $state.go('tab.addStorageplace');
-  }
-})
-
 //Controller voor de report tab
 .controller('ReportCtrl', function($scope, $state, $cordovaFile, $cordovaEmailComposer, $filter, $ionicPlatform ) {
   var referentie;
@@ -431,37 +455,46 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   $scope.excel = function() {
     var inventories = $scope.inventories;
     var array;
-    var CSV = "";
+    var CSV = "ID,Datum,Opslagplaats,Totaal Flessen,Totaal boxes,Categorie,Totaal flessen Cat,Totaal boxes Cat,Volle bakken,Losse flessen,boxes  \r\n";
     var head = "";
     //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
     angular.forEach(inventories, function(value, key){
       var key = key;
       var date = $filter('date')(value.Date, "dd-MM-yyyy");
       var inventory = value.Inventory;
-      head = key + "," + date + "," + inventory + ",";
+      var totalBot = value.TotalBottles;
+      var totalBox = value.TotalBoxes;
+      head = key + "," + date + "," + inventory + "," + totalBot + "," + totalBox + ",";
       angular.forEach(value.Products, function(value, key){
         var productKey = key;
         var productBox = value.boxes;
         var productFull = value.full;
         var productHalf = value.half;
-        CSV += head + productKey + "," + productBox + "," + productFull + "," + productHalf + '\r\n';
+        var totalBotCat = value.totalBottlesCat;
+        var totalBoxCat = value.totalBoxesCat;
+        CSV += head + productKey  + "," + totalBotCat + "," + totalBoxCat + "," + productFull + "," + productHalf + "," + productBox + '\r\n';
       })
     })
 
     $ionicPlatform.ready(function() {
-      $cordovaFile.createDir("file:///storage/sdcard0/", "inventories", false)
-      .then(function (success) {
-        // success
-      }, function (error) {
-        // error
+      $cordovaFile.checkDir("file:///storage/sdcard0/inventories")
+      .then(function (result) {
+      }, function (err) {
+        $cordovaFile.createDir("file:///storage/sdcard0/", "inventories", false)
+        .then(function (success) {
+          // success
+        }, function (error) {
+          // error
+        });
+
       });
 
       $cordovaFile.createFile("file:///storage/sdcard0/inventories/inventory.csv", true).then( function(fileEntry) {
       });
       $cordovaFile.writeFile("file:///storage/sdcard0/inventories", 'inventory.csv', CSV, true).then( function(success) {
-        alert("gelukt");
+
       }), function(error){
-        alert("mislukt" + error);
+        alert(JSON.stringify(error))
       };
     });
 
@@ -474,7 +507,43 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
         alert("not available");
       });
         var email = {
-          to: 'mertens.tinne@outlook.com',
+          to: '',
+          attachments: [
+            'file:///storage/sdcard0/inventories/inventory.csv'
+          ],
+          subject: 'Inventaris',
+          body:'',
+          isHtml: true
+        };
+
+        $cordovaEmailComposer.open(email).then(null, function () {
+          // user cancelled email
+        });
+      });
+    // $state.go('tab.email');
+  };
+
+  $scope.changePagetoSearchCat = function(){
+    $state.go('tab.searchProducts');
+  }
+
+  $scope.changePagetoSearchInStorage = function(){
+    $state.go('tab.searchInStorages');
+  }
+})
+
+.controller('EmailCtrl', function($scope, $cordovaEmailComposer, $ionicPlatform){
+  $scope.send = function(emailReceiver){
+    $ionicPlatform.ready(function() {
+      $cordovaEmailComposer.isAvailable().then(function() {
+        // is available
+        alert("available");
+      }, function () {
+        // not available
+        alert("not available");
+      });
+        var email = {
+          to: emailReceiver,
           attachments: [
             'file:///storage/sdcard0/inventories/inventory.csv'
           ],
@@ -487,105 +556,6 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
           // user cancelled email
         });
       });
-  };
-
-
-
-
-    // $cordovaFile.writeFile(cordova.file.dataDirectory, array, "text", true)
-    //   .then(function (success) {
-    //     // success
-    //   }, function (error) {
-    //     // error
-    //   });
-    // var str = '';
-    //
-    // for (var i = 0; i < array.length; i++) {
-    //   var line = '';
-    //   for (var index in array[i]) {
-    //     if (line != ''){
-    //       line += ','
-    //     }else{
-    //       line += array[i][index];
-    //     }
-    //   }
-    //   str += line + '\r\n';
-    //   console.log(line);
-    // }
-    // console.log("result: " + str);
-
-
-    // var ref = cordova.InAppBrowser.open('http://www.google.com', '_blank', 'location=yes');
-    // var ConvertToCSV = function(objArray) {
-    //   var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-    //   var str = '';
-    //
-    //   for (var i = 0; i < array.length; i++) {
-    //     var line = '';
-    //   for (var index in array[i]) {
-    //     if (line != '') line += ','
-    //       line += array[i][index];
-    //     }
-    //     str += line + '\r\n';
-    //   }
-    //   return str;
-    // };
-    // $cordovaFile.writeFile( cordova.file.dataDirectory, ConvertToCSV(objArray), {'append':false} ).then( function(result) {
-    //
-
-    // })
-
-    // $scope.exportHref=Excel.tableToExcel(tableID,'sheet name');
-    // var exportHref=Excel.tableToExcel(tableID,'sheet name');
-    // $timeout(function(){location.href=exportHref;},100);
-
-    // var blob = new Blob([document.getElementById('exportable').innerHTML], {
-    //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-    // });
-    // var blobUrl = URL.createObjectURL(blob);
-    // $scope.url = blobUrl;
-    // window.open(blobUrl,'_system','location=yes');
-    // if(window.plugins && window.plugins.emailComposer) {
-    //     window.plugins.emailComposer.showEmailComposerWithCallback(function(result) {
-    //         console.log("Response -> " + result);
-    //     },
-    //     "Feedback for your App", // Subject
-    //     "",                      // Body
-    //     ["mertens.tinne@outlook.com"],    // To
-    //     null,                    // CC
-    //     null,                    // BCC
-    //     false,                   // isHTML
-    //     null,                    // Attachments
-    //     null);                   // Attachment Data
-    // }
-
-    //     $cordovaFile.createFile(filePath, filename, true).then(function() {
-    //         return $cordovaFile.writeFile(filePath, filename, JSONToCSVConvertor(jsonFile, "title", true), true);
-    //     }).then( function(result) {
-    //         // alert("导出成功, 路径为: " + $rootScope.filePath + filename);
-    //     }, function(err) {
-    //         alert(JSON.stringify(err));
-    //     });
-    // }
-    // var blob = new Blob([document.getElementById('exportable').innerHTML], {
-    //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-    // });
-    // saveAs(blob, "test.xls");
-  //   var file = new Blob([document.getElementById('exportable').innerHTML], {
-  //     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-  //   });
-  //
-
-  // $scope.excel = function(){
-  //   $state.go('tab.excel');
-  // }
-
-  $scope.changePagetoSearchCat = function(){
-    $state.go('tab.searchProducts');
-  }
-
-  $scope.changePagetoSearchInStorage = function(){
-    $state.go('tab.searchInStorages');
   }
 })
 
@@ -649,17 +619,6 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
     });
  };
 
- $scope.groups = [];
-  for (var i=0; i<10; i++) {
-    $scope.groups[i] = {
-      name: i,
-      items: []
-    };
-    for (var j=0; j<3; j++) {
-      $scope.groups[i].items.push(i + '-' + j);
-    }
-  }
-
  $scope.toggleGroup = function(group) {
    if ($scope.isGroupShown(group)) {
      $scope.shownGroup = null;
@@ -676,16 +635,24 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   $scope.storages = Storages;
   $scope.inventories = Inventory.Date;
   var inventoryDate = Inventory;
+  var date;
+  var ref = new Firebase('https://testdb-1.firebaseio.com/Inventories');
+  ref.on("value", function(snapshot){
+    values = snapshot.val();
+  })
 
   var dateArr = [];
-  for(i=0; i< localStorage.length; i++){
-    var date = $filter('date')(inventoryDate[i].Date, 'MM-dd-yyyy');
+  angular.forEach(values, function(value, key){
+    var date = $filter('date')(value.Date, 'MM-dd-yyyy');
     var item = {
       date: date,
       status: 'full'
     };
     dateArr.push(item);
-  }
+  })
+  // for(i=0; i< values.length; i++){
+  //
+  // }
 
   $scope.getDayClass = function(date, mode) {
     if (mode === 'day') {
@@ -708,6 +675,37 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   //     $scope.dt = new Date();
   // };
   // $scope.today();
+  $scope.getDate = function(date){
+    var date = date.dt;
+    var dt = $filter('date')(date, "dd-MM-yyyy");
+    var ref = new Firebase("https://testdb-1.firebaseio.com/Inventories");
+    // var invenRef = ref.child('Inventories');
+
+    var arrData = [];
+    var myStore = [];
+    var myTestDate = [];
+
+    ref.on("child_added", function(snapshot){
+      var data = snapshot.val();
+      var convertDate = $filter('date')(data.Date, 'dd-MM-yyyy');
+      var myDate = [convertDate];
+
+      for (var j = 0; j < myDate.length; j++) {
+        if (myDate[j] == dt) {
+
+          var store = data.Inventory;
+
+          myStore.push(store);
+          $scope.plaatsen = myStore;
+
+          arrData.push(data);
+          $scope.details = arrData;
+        }
+      }
+    })
+    console.log($scope.plaatsen);
+    console.log($scope.details);
+  }
 
   $scope.open = function($event) {
     $scope.status.opened = true;
@@ -720,9 +718,6 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
     opened: false
   };
 
-  var date = $scope.dt;
-  var dt = $filter('date')(date, "dd-MM-yyyy");
-
   $scope.toggleGroup = function(group) {
     if ($scope.isGroupShown(group)) {
       $scope.shownGroup = null;
@@ -733,6 +728,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   $scope.isGroupShown = function(group) {
     return $scope.shownGroup === group;
   };
+
 })
 
 //Controller voor de manage tab
@@ -762,19 +758,107 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
 
 })
 
+//Controller voor het tonen van alle opslagplaatsen in de tab manage
+.controller('StockageCtrl', function($scope, $ionicPopup, $state, $localstorage, Storages) {
+  $scope.storages = Storages;
+
+  $scope.showConfirm = function(index) {
+    if($localstorage.get('alerts') == "true"){
+      var confirmPopup = $ionicPopup.confirm({
+        title: 'Verwijder',
+        template: 'Bent u zeker dat u dit item wilt verwijderen?'
+      });
+      confirmPopup.then(function(res) {
+        if(res) {
+          //Verwijderen van opslagplaats
+          Storages.$remove(index);
+        } else {
+          console.log('You are not sure');
+        }
+      });
+    }else{
+      Storages.$remove(index);
+    }
+  };
+
+  $scope.edit = function(id){
+    $localstorage.set('stockageId', id);
+    $state.go('tab.editStorageplace');
+  }
+
+  $scope.changePageToAdd = function(){
+    $state.go('tab.addStorageplace');
+  }
+})
+
+.controller('EditstorageCtrl', function($scope, $state, $localstorage, $ionicListDelegate, Storages){
+  var storages = Storages[$localstorage.get('stockageId')];
+  var id = storages.$id;
+  if(storages.address == "null"){
+    var address = "";
+  }else{
+    var address = storages.address;
+  }
+  if(storages.city == "null"){
+    var city = "";
+  }else{
+    var city = storages.city;
+  }
+  $scope.storage = {storageName: storages.name, address: address, city: city};
+  $scope.editStorage = function(form, storage){
+    if(form.$valid){
+      var storageName = storage.storageName;
+      if(typeof storage.address != "undefined"){
+          var address = storage.address;
+      }else{
+        var address = "null";
+      }
+      if(typeof storage.city != "undefined"){
+          var city = storage.city;
+      }else{
+        var city = "null";
+      }
+
+      var ref = new Firebase('https://testdb-1.firebaseio.com/Storages');
+      ref.child(id).set({
+        "name": storageName,
+        "address": address,
+        "city": city
+      });
+
+      $state.go('tab.stockage');
+    }
+  };
+})
+
 //Controller voor het toevoegen van opslagplaatsen
 .controller('AddstorageCtrl', function($scope, $state, Storages){
   $scope.storages = Storages;
 
   $scope.addStorage = function(form, storage){
     if(form.$valid){
-      var storageName = storage.storageName
-      var storageAddress = storage.address
-      var storageCity = storage.city
+      if(typeof storage.storageName != "undefined"){
+          var storageName = storage.storageName;
+      }else{
+        var storageName = "null";
+      }
+      if(typeof storage.address != "undefined"){
+          var address = storage.address;
+      }else{
+        var address = "null";
+      }
+      if(typeof storage.city != "undefined"){
+          var city = storage.city;
+      }else{
+        var city = "null";
+      }
+
 
       //Toevoegen in de database
       var add = $scope.storages.$add({
-        "name": storageName
+        "name": storageName,
+        "address": address,
+        "city": city
       });
 
       //Als het goed is opgeslagen in de database, verder gaan naar de volgende pagina
@@ -783,6 +867,45 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
       };
     }
   }
+})
+
+.controller('editCatCtrl', function($scope, $localstorage, $state, Categories){
+  var categories = Categories[$localstorage.get('editCat')];
+  var id = categories.$id;
+  if(categories.Size == "null"){
+    var size = "";
+  }else{
+    var size = categories.Size;
+  }
+  $scope.cat = {catName: categories.Category, number: size, isChecked: categories.Optional};
+  $scope.editCat = function(form, cat){
+    if(form.$valid){
+      if(typeof cat.catName != "undefined"){
+          var catName = cat.catName;
+      }else{
+        var catName = "null";
+      }
+      if(typeof cat.number != "undefined"){
+          var number = cat.number;
+      }else{
+        var number = "null";
+      }
+      if(typeof cat.isChecked != "undefined"){
+          var optional = cat.isChecked;
+      }else{
+        var optional = cat.isChecked;
+      }
+      console.log(optional);
+      var ref = new Firebase('https://testdb-1.firebaseio.com/Categorie')
+      // var catRef = ref.child(id);
+      ref.child(id).set({
+        Category: catName,
+        Size: number,
+        Optional: optional
+      });
+      $state.go('tab.overviewCat');
+    }
+  };
 })
 
 //Controller voor het overzicht van alle categorieën in manage tab
@@ -806,6 +929,11 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
       Categories.$remove(index);
     }
   };
+
+  $scope.edit = function(id){
+    $localstorage.set('editCat', id);
+    $state.go('tab.editCat');
+  }
 
   $scope.changePageToAdd = function(){
     $state.go('tab.addCat')

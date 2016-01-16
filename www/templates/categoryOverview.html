@@ -5,8 +5,15 @@
     <ion-list>
       <ion-item class="item-button-right" ng-repeat="categorie in categories" align="left">
         <p>{{categorie.Category}}</p>
-        <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
-      </ion-item>
+        <ion-option-button class="button-assertive icon ion-android-delete" ng-show="true" style="width: 70px" ng-click="showConfirm($index)">
+        </ion-option-button>
+        <ion-option-button class="button-stable icon ion-android-create" style="width: 70px" ng-click="edit($index)">
+
+        </ion-option-button>
+        <!-- <div class="buttons">
+          <a class="button button-icon icon ion-android-delete" ng-click="showConfirm($index)"></a>
+          <a class="button button-icon icon ion-android-create" ng-click="edit($index)"></a>
+      </div> -->
     </ion-list>
 
       <button class="button button-block button-dark" ng-click="changePageToAdd()">

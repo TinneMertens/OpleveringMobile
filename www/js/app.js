@@ -99,6 +99,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
 
+  .state('tab.email', {
+    url: '/email',
+    views: {
+      'tab-report': {
+        templateUrl: 'templates/email.html',
+        controller: 'EmailCtrl'
+      }
+    }
+  })
+
   .state('tab.searchProducts', {
     url: '/searchProducts',
     views: {
@@ -149,6 +159,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
 
+.state('tab.editStorageplace', {
+  url: '/editstorageplace',
+  views: {
+    'tab-manage': {
+      templateUrl: 'templates/editStoragePlace.html',
+      controller: 'EditstorageCtrl'
+    }
+  }
+})
+
 .state('tab.overviewCat', {
   url: '/overviewCategory',
   views: {
@@ -165,6 +185,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     'tab-manage': {
       templateUrl: 'templates/addCategory.html',
       controller: 'addCatCtrl'
+    }
+  }
+})
+
+.state('tab.editCat',{
+  url: '/editCategory',
+  views: {
+    'tab-manage': {
+      templateUrl: 'templates/editCategory.html',
+      controller: 'editCatCtrl'
     }
   }
 })

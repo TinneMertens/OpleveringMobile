@@ -5,44 +5,30 @@
     <br>
     <div align="center">
       <div style="display:inline-block; height:250px;">
-        <uib-datepicker icon-prefix="fa" ng-model="dt" min-date="minDate" show-weeks="false" custom-class="getDayClass(date, mode)"></uib-datepicker>
+        <uib-datepicker icon-prefix="fa" ng-model="date.dt" ng-change="getDate(date)" min-date="minDate" show-weeks="false" custom-class="getDayClass(date, mode)"></uib-datepicker>
       </div>
-      <!-- <div class="row">
-        <div class="col col-40"><h5>Opslaagplaats</h5></div>
-        <div class="col col-10"></div>
-        <div class="col"><p class="input-group">
-          <span class="input-group-btn">
-            <button type="button" class="btn btn-default"><i class="ion-ios-location-outline"></i></button>
-          </span>
-          <select name="singleSelect" ng-model="data.singleSelect" style="height:33px">
-          <option ng-repeat="storage in storages" value="{{storage.name}}">{{storage.name}}</option>
-        </select><br></p></div>
-      </div>
-      <div class="row">
-        <div class="col col-40"><h5>Datum</h5></div>
-        <div class="col col-10"></div>
-        <div class="col col-75">
-
-          <p class="input-group">
-          <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="open($event)"><i class="ion-ios-calendar-outline"></i></button>
-          </span>
-          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" custom-class="getDayClass(date, mode)" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-        </p>
-       </div> -->
       </div>
 
       <br>
       <ion-list class="has-header demo-list-icons">
-        <div>
-          <ion-item class="item-stable item-button-right" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
-              Group {{group.name}}
+        <div ng-repeat="detail in details">
+          <ion-item class="item-icon-left item-button-right" ng-click="toggleGroup(detail)" ng-class="{active: isGroupShown(detail)}">
+            <i class="icon" ng-class="isGroupShown(item) ? 'ion-ios-minus-empty' : 'ion-ios-plus-empty'"></i>
+
+              {{detail.Inventory}}
               <button class="button button-clear button-stable">
-                5
+                {{detail.TotalBottles}}
               </button>
           </ion-item>
-          <ion-item class="item-accordion" ng-show="isGroupShown(group)">
-            test
+          <ion-item class="item-accordion  item-button-right" ng-repeat="(key, product) in detail.Products" ng-show="isGroupShown(detail)">
+            {{key}} <br>
+            &nbsp &nbsp- Volle bakken: {{product.full}} <br>
+            &nbsp &nbsp- Losse flessen: {{product.half}} <br>
+            &nbsp &nbsp &nbsp Verdeeld in: {{product.boxes}} bak(ken)
+            <button class="button button-clear button-stable">
+              {{product.totalBottlesCat}}
+            </button>
+
           </ion-item>
         </div>
       </ion-list>

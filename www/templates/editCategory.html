@@ -1,0 +1,32 @@
+<ion-view>
+  <ion-content>
+    <h3 align="center">Categorie aanpassen</h3>
+    <br>
+    <form name="test" ng-submit="editCat(test, cat)" novalidate>
+      <div class="control-group">
+        <label class="item item-input item-stacked-label" ng-class="{ 'has-error' : test.catName.$invalid}">
+          <span class="input-label">Naam</span>
+          <input type="text" name="catName" id="catName" ng-model="cat.catName" placeholder="Naam" required>
+        </label>
+        <br>
+
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Aantal flessen (Optioneel)</span>
+          <input type="text" name="number" ng-model="cat.number" placeholder="Flessen">
+        </label>
+
+        <ion-checkbox ng-model="cat.isChecked">Kan gedeeltelijk gevuld zijn.</ion-checkbox>
+
+        <button class="button button-block button-dark" >
+          Aanpassen
+        </button>
+        </div
+        <ion-list>
+          <!-- <ion-item class="item-button-right" ng-repeat="categorie in categories" align="left">
+            <p>{{categorie.Category}}</p>
+            <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a>
+          </ion-item> -->
+        </ion-list>
+    </form>
+  </ion-content>
+</ion-view>
