@@ -1,7 +1,7 @@
-<ion-view view-title="Inglorious brewstars">
+<ion-view>
   <ion-content class="padding">
     <!-- <br> -->
-    <h3 align="center">Zoeken naar producten</h3>
+    <h3 align="center">Zoeken op datum</h3>
     <br>
     <div align="center">
       <div style="display:inline-block; height:250px;">
@@ -10,12 +10,14 @@
       </div>
 
       <br>
+      <div ng-show="!details.length" align="center">
+        <h5>Er zijn geen inventarissen gemaakt op deze datum.</h5>
+      </div>
       <ion-list class="has-header demo-list-icons">
         <div ng-repeat="detail in details">
           <ion-item class="item-icon-left item-button-right" ng-click="toggleGroup(detail)" ng-class="{active: isGroupShown(detail)}">
             <i class="icon" ng-class="isGroupShown(item) ? 'ion-ios-minus-empty' : 'ion-ios-plus-empty'"></i>
-
-              {{detail.Inventory}}
+                {{detail.Inventory}}
               <button class="button button-clear button-stable">
                 {{detail.TotalBottles}}
               </button>
@@ -28,10 +30,10 @@
             <button class="button button-clear button-stable">
               {{product.totalBottlesCat}}
             </button>
-
           </ion-item>
         </div>
       </ion-list>
+    </div>
   </div>
 
   </ion-content>

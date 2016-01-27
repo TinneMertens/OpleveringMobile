@@ -1,24 +1,19 @@
 <ion-view>
   <ion-content>
-  <h3 align="center">Overzicht categoriën</h3>
+    <h3 align="center">Overzicht categoriën</h3>
     <br>
     <ion-list>
-      <ion-item class="item-button-right" ng-repeat="categorie in categories" align="left">
+      <ion-item class="item-button-right" ng-repeat="categorie in categories">
         <p>{{categorie.Category}}</p>
-        <ion-option-button class="button-assertive icon ion-android-delete" ng-show="true" style="width: 70px" ng-click="showConfirm($index)">
-        </ion-option-button>
-        <ion-option-button class="button-stable icon ion-android-create" style="width: 70px" ng-click="edit($index)">
 
-        </ion-option-button>
-        <!-- <div class="buttons">
-          <a class="button button-icon icon ion-android-delete" ng-click="showConfirm($index)"></a>
-          <a class="button button-icon icon ion-android-create" ng-click="edit($index)"></a>
-      </div> -->
+        <div class="buttons">
+          <a class="button button-icon icon ion-ios-trash-outline" style="width: 50px" ng-click="showConfirm($index)"></a>
+          <a class="button button-icon icon ion-ios-compose-outline" style="width: 50px" ng-click="edit($index)"></a>
+        </div>
+      </ion-item>
     </ion-list>
-
-      <button class="button button-block button-dark" ng-click="changePageToAdd()">
-        Toevoegen
-      </button>
-    <!-- </div> -->
+    <button class="button button-block button-dark" ng-click="changePageToAdd()">
+      Toevoegen
+    </button>
   </ion-content>
 </ion-view>

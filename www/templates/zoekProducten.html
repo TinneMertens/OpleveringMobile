@@ -9,6 +9,9 @@
       </select><br>
       <br>
 
+      <div ng-show="!show.length && show" align="center">
+        <h5>Dit product is niet meer op voorraad.</h5>
+      </div>
       <ion-list class="has-header demo-list-icons">
         <div ng-repeat="item in show">
           <ion-item class="item-icon-left item-button-right" ng-click="toggleGroup(item)" ng-class="{active: isGroupShown(item)}">
@@ -23,20 +26,5 @@
           </ion-item>
         </div>
       </ion-list>
-
-      <!-- <ion-list class="has-header demo-list-icons">
-        <div>
-          <ion-item ng-repeat="item in show" class="item-stable item-button-right" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
-              {{item}}
-              <button class="button button-clear button-stable">
-                5
-              </button>
-              <ion-item class="item-accordion" ng-show="isGroupShown(group)">
-                test
-              </ion-item>
-          </ion-item>
-
-        </div>
-      </ion-list> -->
   </ion-content>
 </ion-view>

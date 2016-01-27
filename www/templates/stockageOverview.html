@@ -5,11 +5,11 @@
     <ion-list>
       <ion-item class="item-button-right" ng-repeat="storage in storages" align="left">
         <p>{{storage.name}}</p>
-        <!-- <a class="button button-icon icon ion-ios-trash-outline" ng-click="showConfirm($index)"></a> -->
-        <ion-option-button class="button-assertive icon ion-android-delete" style="width: 70px" ng-click="showConfirm($index)">
-        </ion-option-button>
-        <ion-option-button class="button-stable icon ion-android-create" style="width: 70px" ng-click="edit($index)">
-        </ion-option-button>
+
+        <div class="buttons" align="right">
+          <a class="button button-icon icon ion-ios-trash-outline" style="width: 50px" ng-click="showConfirm($index)"></a>
+          <a class="button button-icon icon ion-ios-compose-outline" style="width: 50px" ng-click="edit($index)"></a>
+        </div>
       </ion-item>
     </ion-list>
 

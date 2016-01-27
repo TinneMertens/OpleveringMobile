@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngMessages', 'ngAnimate', 'ui.bootstrap', 'firebase'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngMessages', 'ngAnimate', 'ui.bootstrap', 'firebase', 'chart.js'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -32,7 +32,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   $stateProvider
 
   // setup an abstract state for the tabs directive
-    .state('tab', {
+  .state('tab', {
     url: '/tab',
     abstract: true,
     templateUrl: 'templates/tabs.html'
@@ -40,6 +40,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 
   // Each tab has its own nav history stack:
 
+  // Aanmaken van de inventaris (1ste tab)
   .state('tab.inventory', {
     url: '/inventory',
     views: {
@@ -69,15 +70,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       }
     }
   })
-    // .state('tab.chat-detail', {
-    //   url: '/chats/:chatId',
-    //   views: {
-    //     'tab-chats': {
-    //       templateUrl: 'templates/chat-detail.html',
-    //       controller: 'ChatDetailCtrl'
-    //     }
-    //   }
-    // })
+
+  // Raportages (2de tab)
 
   .state('tab.report', {
     url: '/report',
@@ -85,26 +79,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       'tab-report': {
         templateUrl: 'templates/tab-report.html',
         controller: 'ReportCtrl'
-      }
-    }
-  })
-
-  .state('tab.excel', {
-    url: '/excel',
-    views: {
-      'tab-report': {
-        templateUrl: 'templates/excel.html',
-        controller: 'ExcelCtrl'
-      }
-    }
-  })
-
-  .state('tab.email', {
-    url: '/email',
-    views: {
-      'tab-report': {
-        templateUrl: 'templates/email.html',
-        controller: 'EmailCtrl'
       }
     }
   })
@@ -129,95 +103,73 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
 
-  .state('tab.manage', {
-    url: '/manage',
-    views: {
-      'tab-manage': {
-        templateUrl: 'templates/tab-manage.html',
-        controller: 'ManageCtrl'
+  .state('tab.charts', {
+    url: '/charts',
+    views:{
+      'tab-report':{
+        templateUrl: 'templates/charts.html',
+        controller: 'chartCtrl'
       }
     }
   })
 
-.state('tab.stockage', {
+// Beheer gedeelte/instellingen (icoontje rechtsbovenaan)
+  .state('overview', {
+    url: '/overview',
+    templateUrl: 'templates/tab-manage.html',
+    controller: 'ManageCtrl'
+  })
+  // .state('manage.overview', {
+  //   url: '/overview',
+  //   views: {
+  //     'manage-overview': {
+  //       templateUrl: 'templates/tab-manage.html',
+  //       controller: 'ManageCtrl'
+  //     }
+  //   }
+  // })
+
+  .state('stockage', {
     url: '/overviewStockage',
-    views: {
-      'tab-manage': {
-        templateUrl: 'templates/stockageOverview.html',
-        controller: 'StockageCtrl'
-      }
-    }
+    templateUrl: 'templates/stockageOverview.html',
+    controller: 'StockageCtrl'
   })
 
-  .state('tab.addStorageplace', {
+  .state('addStorageplace', {
     url: '/addstorageplace',
-    views: {
-      'tab-manage': {
-        templateUrl: 'templates/addStoragePlace.html',
-        controller: 'AddstorageCtrl'
-      }
-    }
+    templateUrl: 'templates/addStoragePlace.html',
+    controller: 'AddstorageCtrl'
   })
 
-.state('tab.editStorageplace', {
-  url: '/editstorageplace',
-  views: {
-    'tab-manage': {
-      templateUrl: 'templates/editStoragePlace.html',
-      controller: 'EditstorageCtrl'
-    }
-  }
-})
+  .state('editStorageplace', {
+    url: '/editstorageplace',
+    templateUrl: 'templates/editStoragePlace.html',
+    controller: 'EditstorageCtrl'
+  })
 
-.state('tab.overviewCat', {
-  url: '/overviewCategory',
-  views: {
-    'tab-manage': {
-      templateUrl: 'templates/categoryOverview.html',
-      controller: 'OverviewCatCtrl'
-    }
-  }
-})
+  .state('overviewCat', {
+    url: '/overviewCategory',
+    templateUrl: 'templates/categoryOverview.html',
+    controller: 'OverviewCatCtrl'
+  })
 
-.state('tab.addCat', {
-  url: '/addCategory',
-  views: {
-    'tab-manage': {
-      templateUrl: 'templates/addCategory.html',
-      controller: 'addCatCtrl'
-    }
-  }
-})
+  .state('addCat', {
+    url: '/addCategory',
+    templateUrl: 'templates/addCategory.html',
+    controller: 'addCatCtrl'
+  })
 
-.state('tab.editCat',{
-  url: '/editCategory',
-  views: {
-    'tab-manage': {
-      templateUrl: 'templates/editCategory.html',
-      controller: 'editCatCtrl'
-    }
-  }
-})
+  .state('editCat',{
+    url: '/editCategory',
+    templateUrl: 'templates/editCategory.html',
+    controller: 'editCatCtrl'
+  })
 
-.state('tab.overviewInventories', {
-  url: '/overviewInventories',
-  views: {
-    'tab-manage': {
-      templateUrl: 'templates/overviewInventories.html',
-      controller: 'overviewInvenCtrl'
-    }
-  }
-})
-
-.state('tab.settings', {
-  url: '/settings',
-  views: {
-    'tab-manage': {
-      templateUrl: 'templates/settings.html',
-      controller: 'settingsCtrl'
-    }
-  }
-});
+  .state('overviewInventories', {
+    url: '/overviewInventories',
+    templateUrl: 'templates/overviewInventories.html',
+    controller: 'overviewInvenCtrl'
+  });
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('tab/inventory');

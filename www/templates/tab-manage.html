@@ -1,7 +1,9 @@
 <ion-view>
+  <ion-nav-buttons side="left">
+        <button class="button" ng-click="$ionicGoBack()"><i class="ion-arrow-left-c"></i> Back</button>
+    </ion-nav-buttons>
   <ion-content class="center" on-swipe-right="goBack()" on-swipe-left="goForward()">
-    <!-- <div class = "row">
-      <div class= "col"> -->
+
         <button class="button button-block button-dark" class="center" ng-click="changePageToCat()">
           Categoriën
         </button>
@@ -15,9 +17,6 @@
         </button>
 
         <ion-checkbox ng-model="isChecked.checked" ng-change="changeSettings(isChecked)" class="checkbox-assertive">Waarschuwingen ontvangen</ion-checkbox>
-
-      <!-- </div>
-    </div> -->
 
   </ion-content>
 </ion-view>
