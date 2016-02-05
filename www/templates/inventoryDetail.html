@@ -3,14 +3,14 @@
     <h3 align="center">{{cat}}</h3>
     <form name="inventories" ng-submit="editInventory(inventories, invent, test)" novalidate>
       <div class="list">
-        <label class="item item-input item-floating-label">
-          <span class="input-label"><p>Aantal volle bakken/boxes</p></span>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label"><p>volle bakken</p></span>
           <input type="number" ng-model="invent.full" placeholder="Aantal volle bakken/boxes">
         </label>
         <br>
         <!-- <div ng-if="optional"> -->
-          <label class="item item-input item-floating-label" ng-show="optional">
-            <span class="input-label"><p>Aantal (losse) flessen</p></span>
+          <label class="item item-input item-stacked-label" ng-show="optional">
+            <span class="input-label"><p>losse flessen</p></span>
             <input type="number" ng-model="test.test" placeholder="Aantal (losse) flessen" max={{size}}>
           </label>
         <!-- </div> -->

@@ -141,6 +141,10 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   $scope.categories = Categories;
   $scope.size = Categories[index].Size;
 
+  if(typeof sizeBox == "undefined"){
+    sizeBox = 1;
+  }
+
   //aantal flessen zichtbaar maken of niet
   if(optional == true){
     $scope.optional = true;
@@ -226,7 +230,9 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
     //form.$valid -> kijken of alles in de form netjes is ingevuld
     if(form.$valid){
       if(typeof invent != "undefined"){
-        var full = invent.full;
+        var test = invent.full + '';
+        var array = test.split(".");
+        var full = Math.abs(parseInt(array[0]));
       }else{
         var full = null;
       }
@@ -236,7 +242,9 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
       }
 
       if(typeof inventory != "undefined"){
-        var half = inventory.test;
+        var testHalf = inventory.test + '';
+        var arrayHalf = testHalf.split(".");
+        var half = Math.abs(parseInt(arrayHalf[0]));
         newBox = 1;
         boxes++;
       }else{
@@ -248,7 +256,8 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
       newFull += full;
       newHalf += half;
 
-      // Berkenen van nieuwe waarden voor algemeen totaal boxes en bottles
+      console.log()
+      // Berekenen van nieuwe waarden voor algemeen totaal boxes en bottles
       var totalBox = full + newBox;
       var totalBot = full * sizeBox + half;
       exCountBoxes += totalBox;
@@ -297,6 +306,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
     // Leegmaken van tekstvelden in html
     this.invent = undefined;
     this.test = undefined;
+    inventory = undefined;
   }
 
   // Functie om een aantal reeds toegevoegde flesjes terug te verwijderen
@@ -317,60 +327,93 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
             if (!$scope.data.min) {
               e.preventDefault();
             } else {
-              var result = $scope.data.min;
+              var testResult = $scope.data.min + '';
+              var arrayResult = testResult.split(".");
+              var result = Math.abs(parseInt(arrayResult[0]));
               var sizeBox =  Categories[index].Size;
               console.log(result);
 
+
               // Volle bakken verwijderen
               if(type == "full"){
-                newFull -= result;
-                exCountBoxes -= result;
-                exCountBottles -= result * sizeBox;
-                totalBoxesCat -= result;
-                totalBottlesCat -= result * sizeBox;
+                if(result > newFull){
+                  window.plugins.toast.showWithOptions(
+                  {
+                    message: "Opgepast, gelieve een waarde in te geven die kleiner is.",
+                    duration: "short",
+                    position: "center",
+                    addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+                  });
+                }else{
+                  newFull -= result;
+                  exCountBoxes -= result;
+                  exCountBottles -= result * sizeBox;
+                  totalBoxesCat -= result;
+                  totalBottlesCat -= result * sizeBox;
 
-                // Effectief aanpassen
-                lineRef.update({
-                  "TotalBoxes": exCountBoxes,
-                  "TotalBottles": exCountBottles
-                })
+                  // Effectief aanpassen
+                  lineRef.update({
+                    "TotalBoxes": exCountBoxes,
+                    "TotalBottles": exCountBottles
+                  })
 
-                check.update({
-                  "full": newFull,
-                  "totalBoxesCat": totalBoxesCat,
-                  "totalBottlesCat": totalBottlesCat
-                })
+                  check.update({
+                    "full": newFull,
+                    "totalBoxesCat": totalBoxesCat,
+                    "totalBottlesCat": totalBottlesCat
+                  })
+                }
                 // Halve bakken/losse flessen verwijderen
               }else if(type =="half"){
-                newHalf -= result;
-                exCountBottles -= result;
-                totalBottlesCat -= result;
+                if(result > newHalf){
+                  window.plugins.toast.showWithOptions(
+                  {
+                    message: "Opgepast, gelieve een waarde in te geven die kleiner is.",
+                    duration: "short",
+                    position: "center",
+                    addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+                  });
+                }else{
+                  newHalf -= result;
+                  exCountBottles -= result;
+                  totalBottlesCat -= result;
 
-                // Effectief aanpassen in de DB
-                lineRef.update({
-                  "TotalBottles": exCountBottles
-                })
-                check.update({
-                  "half": newHalf,
-                  "boxes": boxes,
-                  "totalBottlesCat": totalBottlesCat
-                })
+                  // Effectief aanpassen in de DB
+                  lineRef.update({
+                    "TotalBottles": exCountBottles
+                  })
+                  check.update({
+                    "half": newHalf,
+                    "boxes": boxes,
+                    "totalBottlesCat": totalBottlesCat
+                  })
+                }
+
                 // Boxes verwijderen
               }else if (type == "boxes") {
-                boxes -= result;
-                exCountBoxes -= result;
-                totalBoxesCat -= result;
+                if(result > boxes){
+                  window.plugins.toast.showWithOptions(
+                  {
+                    message: "Opgepast, gelieve een waarde in te geven die kleiner is.",
+                    duration: "short",
+                    position: "center",
+                    addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+                  });
+                }else{
+                  boxes -= result;
+                  exCountBoxes -= result;
+                  totalBoxesCat -= result;
 
-                // Effectief aanpassen in de DB
-                lineRef.update({
-                  "TotalBoxes": exCountBoxes
-                })
-                check.update({
-                  "half": newHalf,
-                  "boxes": boxes,
-                  "totalBoxesCat": totalBoxesCat
-                })
-
+                  // Effectief aanpassen in de DB
+                  lineRef.update({
+                    "TotalBoxes": exCountBoxes
+                  })
+                  check.update({
+                    "half": newHalf,
+                    "boxes": boxes,
+                    "totalBoxesCat": totalBoxesCat
+                  })
+                }
               }
             }
           }
@@ -382,14 +425,12 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   // Functie om volle bakken en halve bakken volledig te verwijderen
   $scope.remove = function(type){
     if(type == "full"){
-      // Volle bakken verwijderen in de DB
-      check.child("full").remove();
-
       // Herberekenen van algemene totalen
       exCountBoxes -= newFull;
       exCountBottles -= newFull * sizeBox;
       totalBoxesCat -= newFull;
       totalBottlesCat -= newFull * sizeBox;
+
 
       // Alegemene totalen aanpassen in de DB
       lineRef.update({
@@ -398,6 +439,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
       })
 
       check.update({
+        "full": 0,
         "totalBoxesCat": totalBoxesCat,
         "totalBottlesCat": totalBottlesCat
       })
@@ -426,12 +468,11 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
         "TotalBoxes" : exCountBoxes
       })
       check.update({
+        "half": 0,
+        "boxes": 0,
         "totalBoxesCat": totalBoxesCat,
         "totalBottlesCat": totalBottlesCat
       })
-      // Effectief verwijderen van halve bakken en boxes uit de database
-      check.child("half").remove();
-      check.child("boxes").remove();
 
       // Aanpassen in html
       newHalf = null;
@@ -465,6 +506,10 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
     $scope.inventories = snapshot.val();
     referentie = snapshot.val();
   })
+
+  // Datum vandaag
+  var date = new Date();
+  var today =  $filter('date')(date, "dd-MM-yyyy");
 
   $scope.excel = function() {
     var inventories = $scope.inventories;
@@ -509,10 +554,12 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
 
       });
 
+
+
       // Nu gaan we een de CSV effectief wegschrijven op de phone
-      $cordovaFile.createFile("file:///storage/sdcard0/inventories/inventory.csv", true).then( function(fileEntry) {
+      $cordovaFile.createFile("file:///storage/sdcard0/inventories/" + today + ".csv", true).then( function(fileEntry) {
       });
-      $cordovaFile.writeFile("file:///storage/sdcard0/inventories", 'inventory.csv', CSV, true).then( function(success) {
+      $cordovaFile.writeFile("file:///storage/sdcard0/inventories", today + '.csv', CSV, true).then( function(success) {
 
       }), function(error){
         alert(JSON.stringify(error))
@@ -528,7 +575,7 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
         var email = {
           to: '',
           attachments: [
-            'file:///storage/sdcard0/inventories/inventory.csv'
+            'file:///storage/sdcard0/inventories/' + today+'.csv'
           ],
           subject: 'Inventaris',
           body:'',
@@ -562,56 +609,55 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
   $scope.categories = Categories;
 
   $scope.searchInventory = function(data){
-    // De geselecteerde categorie
     var word = data.singleSelect;
 
-    if(word == "Kies een categorie"){
-      $scope.show = false;
-    }else{
-      $scope.show = true;
-    }
-
-    // Navigeren naar de juiste child binnen de DB
     var ref = new Firebase('https://testdb-1.firebaseio.com/');
     var testRef = new Firebase('https://testdb-1.firebaseio.com/Inventories/')
     var invenRef = ref.child('Inventories');
-    var prodRef = invenRef.child('Products');
 
-    var arrInv = [];
-    var arrDate = [];
+    var myData = [];
+    var newArr = [];
 
     invenRef.on("child_added", function(snapshot){
       var data = snapshot.val();
-      var store = data.Inventory;
       var prod = data.Products;
 
-      var newArr = [];
-      var test = Object.keys(prod);
+      var myProd = Object.keys(prod);
 
-      for( var i = 0; i < test.length; i++){
-        if (test[i] == word) {
-         var convertDate = $filter('date')(data.Date, 'dd-MM-yyyy');
-         arrDate.push(convertDate);
-         arrInv.push(data.Inventory);
+      for( var i = 0; i < myProd.length; i++){
+        if (myProd[i] == word) {
+          myData.push(data);
+          console.log(myData);
         };
       };
 
-      for (var y = arrInv.length - 1; y >= 0; y--) {
+    });
+
+      //de loops uit de functie van firebase halen. anders raken de loops in de war.
+      //omdat die firebase functie in de db zelf loopt en deze loops ook --> zorgt voor conflicten
+      for (var y = myData.length - 1; y >= 0; y--) {//reversed loop voor meest recente data vooraan in de array te zetten
+        console.log(myData[y]);
         var found = undefined;
-        for (var z = 0; z < newArr.length; z++) { //
-          if (arrInv[y] === newArr[z]) {
+        for (var z = 0; z < newArr.length; z++) {
+         console.log(newArr[z]);
+          //op de onderstaande manier logt het wel juist, maar het doet niets in werkelijkheid.
+          //if (myData[y.Inventory] === newArr[z.Inventory]) {
+            //alleen op deze manier kun je de waardes van de properties van een object eruit halen
+            if (myData[y]['Inventory'] === newArr[z]['Inventory']) {
             found = true;
             break;
           };
         };
+
         if (!found) {
-          newArr.push(arrInv[y]);
+          newArr.push(myData[y]);
+          console.log(newArr);
         }
       };
-      $scope.show = newArr;
-    });
- };
 
+      $scope.show = newArr;
+      console.log($scope.show);
+ };
 // Dit is nodig voor de accordion lists
  $scope.toggleGroup = function(group) {
    if ($scope.isGroupShown(group)) {
@@ -728,13 +774,56 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
 
 })
 
-.controller('chartCtrl', function($scope){
-  $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-   $scope.series = ['Series A', 'Series B'];
-   $scope.data = [
-       [65, 59, 80, 81, 56, 55, 40],
-       [28, 48, 40, 19, 86, 27, 90]
-   ];
+.controller('chartCtrl', function($scope, $filter, Categories){
+  var exists;
+  var ref = new Firebase('https://testdb-1.firebaseio.com/Inventories');
+  var data = [];
+  var arrInv = [];
+  var arrData = [];
+  var teller = 0;
+
+  var category = [];
+  var refCat = new Firebase('https://testdb-1.firebaseio.com/Categorie');
+  refCat.on('value', function(snapshot){
+    var categories = snapshot.val();
+
+    angular.forEach(categories, function(value, key){
+      category.push(value.Category);
+      var name = value.Category;
+      arrInv[teller] = name;
+      ref.on("value", function(snapshot){
+        var inventories = snapshot.val();
+        angular.forEach(inventories, function(value, key){
+          var date = $filter('date')(value.Date, "dd-MM-yyyy");
+          var storage = value.Inventory;
+          angular.forEach(value.Products, function(value, key){
+              if(key == name){
+                if(typeof(arrData[teller]) == "undefined"){
+                  arrData[teller] = date;
+                  data[teller] = value.totalBottlesCat;
+                }else
+                if (date == arrData[teller]) {
+                  data[teller] += value.totalBottlesCat;
+                }else if (date > arrData[teller]) {
+                  arrData[teller] = date;
+                  data[teller] = value.totalBottlesCat;
+                }
+                // }
+              }else{
+                // data[teller] = 0;
+              }
+
+          })
+        })
+      })
+      teller++;
+    })
+  })
+
+  $scope.labels = arrInv;
+  $scope.data = [
+     data
+  ];
 })
 
 //Controller voor de manage tab
@@ -870,6 +959,14 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
       });
 
       $state.go('stockage');
+    }else{
+      window.plugins.toast.showWithOptions(
+      {
+        message: "Gelieve een correcte naam in te geven.",
+        duration: "short",
+        position: "center",
+        addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+      });
     }
   };
 })
@@ -896,18 +993,51 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
         var city = "null";
       }
 
+      // Wijzigingen effectief opslaan in de DB
+      var ref = new Firebase('https://testdb-1.firebaseio.com/Storages');
+      var alreadyExist = false;
+      ref.once("value", function(snapshot){
+        var storages = snapshot.val();
+        angular.forEach(storages, function(value, key){
+          console.log(value);
+          if(value.name == storageName){
+            alreadyExist = true;
+          }
+        })
+      })
 
-      //Toevoegen in de database
-      var add = $scope.storages.$add({
-        "name": storageName,
-        "address": address,
-        "city": city
-      });
+      if(!alreadyExist){
+        //Toevoegen in de database
+        var add = $scope.storages.$add({
+          "name": storageName,
+          "address": address,
+          "city": city
+        });
+      }else{
+        window.plugins.toast.showWithOptions(
+        {
+          message: "Deze naam bestaat reeds voor een opslagplaats.",
+          duration: "short",
+          position: "center",
+          addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+        });
+      }
 
       //Als het goed is opgeslagen in de database, verder gaan naar de volgende pagina
       if(add){
           $state.go('stockage');
       };
+    }
+    else{
+      // Soort van toast message om bevestiging te geven of de flessen effectief zijn toegevoegd in de DB
+      window.plugins.toast.showWithOptions(
+      {
+        message: "Gelieve een correcte naam in te geven.",
+        duration: "short",
+        position: "center",
+        addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+      });
+
     }
   }
 })
@@ -960,7 +1090,20 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
           if(key == categories.Category){
             var child = products.child(key);
             child.once("value", function(snapshot){
-              products.child(catName).set(snapshot.val());
+              var product = snapshot.val();
+              var full = product.full;
+              var half = product.half;
+              var boxes = product.boxes;
+              var totalbottles = product.totalBottlesCat;
+              var totalBoxes = product.totalBoxesCat;
+              products.child(catName).set({
+                "full": full,
+                "half": half,
+                "boxes": boxes,
+                "totalBoxesCat": totalBoxes,
+                "totalBottlesCat": totalbottles
+              })
+              // products.child(catName).set(snapshot.val());
               child.remove();
             })
           }
@@ -975,6 +1118,15 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
         Optional: optional
       });
       $state.go('overviewCat');
+    }
+    else{
+      window.plugins.toast.showWithOptions(
+      {
+        message: "Gelieve een correcte naam in te geven.",
+        duration: "short",
+        position: "center",
+        addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+      });
     }
   };
 })
@@ -1034,16 +1186,49 @@ angular.module('starter.controllers', ['starter.services', 'firebase', 'ngCordov
         var optional = false;
       }
 
-      //Effectief toevoegen in de database
-      $scope.categories.$add({
-        "Category": catName,
-        "Size": number,
-        "Optional": optional
-      });
-      $state.go('overviewCat');
+      // Effectief toevoegen van de aangepaste categorie in de DB
+      var ref = new Firebase('https://testdb-1.firebaseio.com/Categorie')
+      var alreadyExist = false;
+      ref.once("value", function(snapshot){
+        var categories = snapshot.val();
+        angular.forEach(categories, function(value, key){
+          console.log(value.Category);
+          console.log("catName   " + catName);
+          if(value.Category == catName){
+            alreadyExist = true;
+          }
+        })
+      })
+
+      console.log(alreadyExist);
+      if(!alreadyExist){
+        //Effectief toevoegen in de database
+        $scope.categories.$add({
+          "Category": catName,
+          "Size": number,
+          "Optional": optional
+        });
+        $state.go('overviewCat');
+      }else{
+        window.plugins.toast.showWithOptions(
+        {
+          message: "Opgepast deze naam bestaat reeds voor een categorie.",
+          duration: "short",
+          position: "center",
+          addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+        });
+        this.cat = "";
+      }
     }else{
       //Kan eventueel nog een alertmessage verschijnen als het niet in orde is.
-
+      window.plugins.toast.showWithOptions(
+      {
+        message: "Gelieve een correcte naam in te geven.",
+        duration: "short",
+        position: "center",
+        addPixelsY: -40  // (optional) added a negative value to move it up a bit (default 0)
+      });
+      // this.cat = undefined;
     }
   };
 })

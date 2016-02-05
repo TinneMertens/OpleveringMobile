@@ -16,13 +16,19 @@
         <div ng-repeat="item in show">
           <ion-item class="item-icon-left item-button-right" ng-click="toggleGroup(item)" ng-class="{active: isGroupShown(item)}">
             <i class="icon" ng-class="isGroupShown(item) ? 'ion-ios-minus-empty' : 'ion-ios-plus-empty'"></i>
-            {{item}}
+            {{item.Inventory}}
             <button class="button button-clear button-stable">
-              5
+              {{item.TotalBottles}}
             </button>
           </ion-item>
-          <ion-item class="item-accordion" ng-show="isGroupShown(item)">
-            test
+          <ion-item class="item-accordion item-button-right" ng-show="isGroupShown(item)" ng-repeat="(key, product) in item.Products">
+            {{key}} <br>
+            &nbsp &nbsp- Volle bakken: {{product.full}} <br>
+            &nbsp &nbsp- Losse flessen: {{product.half}} <br>
+            &nbsp &nbsp &nbsp Verdeeld in: {{product.boxes}} bak(ken)
+            <button class="button button-clear button-stable">
+              {{product.totalBottlesCat}}
+            </button>
           </ion-item>
         </div>
       </ion-list>
